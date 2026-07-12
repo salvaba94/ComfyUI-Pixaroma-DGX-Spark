@@ -157,13 +157,34 @@ The `run_mac_mps.sh` script includes optimizations for Apple Silicon (M1/M2) Mac
 <details>
 <summary><b>ARM64 Docker CUDA Build</b></summary>
 
-Build the ARM64 CUDA Docker image with the CUDA add-ons and start ComfyUI:
+This ARM64 Docker build is intended mainly for **NVIDIA DGX Spark** and other
+native ARM64 CUDA systems. It uses `docker-compose.arm64.yml`, starts from an
+NVIDIA PyTorch ARM64 CUDA base image, and forces compilation of many native
+dependencies because ARM64 CUDA wheels do not exist for every library.
+
+The heaviest source-build cases are usually add-ons such as **Trellis2**,
+**Nunchaku**, **FlashAttention**, and related CUDA/native extensions. This is
+expected on ARM64 and can take a long time.
+
+Build the ARM64 CUDA image with the CUDA add-ons and start ComfyUI:
 
 ```bash
 docker compose -f docker-compose.arm64.yml build \
   --progress=plain \
   --build-arg INSTALL_ADDONS=SageAttention-NEXT,Nunchaku120-NEXT,Insightface-NEXT,Trellis2,FlashAttention \
   --build-arg ADDON_BUILD_JOBS=1 && docker compose -f docker-compose.arm64.yml up -d
+```
+
+For regular x86_64 NVIDIA CUDA hosts, use the normal Docker Compose file:
+
+```bash
+docker compose -f docker-compose.yml up --build
+```
+
+For CPU-only Docker builds, use:
+
+```bash
+docker compose -f docker-compose.cpu.yml up --build
 ```
 
 </details>
