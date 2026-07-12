@@ -420,22 +420,23 @@ EOL
         echo -e "${YELLOW}Installing llama-cpp-python v0.3.40 with Metal support for macOS...${RESET}"
         CMAKE_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 -DGGML_METAL=on" uv pip install --upgrade --force-reinstall "llama-cpp-python @ git+https://github.com/JamePeng/llama-cpp-python.git" $UV_ARGS
     else
-        # Linux version - try different CUDA versions
-        # Note: JamePeng v0.3.40 has no cu130 Linux build; cu128 is the closest
+        # Linux version - use prebuilt CUDA wheels only on x86_64; build CUDA source elsewhere.
         echo -e "${YELLOW}Installing llama-cpp-python v0.3.40 with CUDA support for Linux...${RESET}"
-        
-        # Try CUDA 12.8 first (no cu130 Linux build for v0.3.40)
-        uv pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.40-cu128-linux-20260607/llama_cpp_python-0.3.40+cu128-cp312-cp312-linux_x86_64.whl $UV_ARGS || {
-            # Fallback to CUDA 12.6
-            uv pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.40-cu126-linux-20260607/llama_cpp_python-0.3.40+cu126-cp312-cp312-linux_x86_64.whl $UV_ARGS || {
-                # Final fallback to source build
-                echo -e "${YELLOW}Falling back to source build with CUDA...${RESET}"
-                CMAKE_ARGS="-DGGML_CUDA=on" uv pip install --upgrade --force-reinstall "llama-cpp-python @ git+https://github.com/JamePeng/llama-cpp-python.git" $UV_ARGS || {
-                    echo -e "${YELLOW}Final fallback to CPU-only llama-cpp-python...${RESET}"
-                    CMAKE_ARGS="-DGGML_BLAS=ON -DGGML_BLAS_VENDOR=OpenBLAS" uv pip install --upgrade --force-reinstall "llama-cpp-python @ git+https://github.com/JamePeng/llama-cpp-python.git" $UV_ARGS
+
+        ARCH="$(uname -m)"
+        if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]; then
+            # JamePeng v0.3.40 has no cu130 Linux build; cu128 is the closest prebuilt wheel.
+            uv pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.40-cu128-linux-20260607/llama_cpp_python-0.3.40+cu128-cp312-cp312-linux_x86_64.whl $UV_ARGS || {
+                uv pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.40-cu126-linux-20260607/llama_cpp_python-0.3.40+cu126-cp312-cp312-linux_x86_64.whl $UV_ARGS || {
+                    echo -e "${YELLOW}Prebuilt CUDA wheels failed; building llama-cpp-python from source with CUDA...${RESET}"
+                    FORCE_CMAKE=1 CMAKE_ARGS="-DGGML_CUDA=on" uv pip install --upgrade --force-reinstall --no-binary llama-cpp-python "llama-cpp-python @ git+https://github.com/JamePeng/llama-cpp-python.git" $UV_ARGS
                 }
             }
-        }
+        else
+            echo -e "${YELLOW}Detected ${ARCH}; prebuilt llama-cpp-python CUDA wheels are x86_64-only.${RESET}"
+            echo -e "${YELLOW}Building llama-cpp-python from source with CUDA...${RESET}"
+            FORCE_CMAKE=1 CMAKE_ARGS="-DGGML_CUDA=on" uv pip install --upgrade --force-reinstall --no-binary llama-cpp-python "llama-cpp-python @ git+https://github.com/JamePeng/llama-cpp-python.git" $UV_ARGS
+        fi
     fi
 
     # Install working version of stringzilla (damn it)

@@ -15,12 +15,22 @@ PID_FILE="$SCRIPT_DIR/.comfyui_server.pid"
 HOST="127.0.0.1"
 PORT=8188
 REMOTE_MODE=0
+BROWSER_MODE=0
 
 # Colors
 GREEN='\033[92m'
 YELLOW='\033[93m'
 RED='\033[91m'
 RESET='\033[0m'
+
+# If this launcher is run from the outer installer checkout, use the actual
+# installed app directory created by ComfyUI-Easy-Install.
+if [ ! -f "$COMFYUI_DIR/main.py" ] && [ -f "$SCRIPT_DIR/ComfyUI-Easy-Install/ComfyUI/main.py" ]; then
+    SCRIPT_DIR="$SCRIPT_DIR/ComfyUI-Easy-Install"
+    COMFYUI_DIR="$SCRIPT_DIR/ComfyUI"
+    PYTHON_CMD="$SCRIPT_DIR/python_embeded/python"
+    PID_FILE="$SCRIPT_DIR/.comfyui_server.pid"
+fi
 
 # Parse arguments
 EXTRA_ARGS=()
@@ -49,6 +59,10 @@ while [[ $# -gt 0 ]]; do
             fi
             PORT="$2"
             shift 2
+            ;;
+        --browser|--no-desktop)
+            BROWSER_MODE=1
+            shift
             ;;
         *)
             EXTRA_ARGS+=("$1")
@@ -81,7 +95,7 @@ if [ ! -x "$PYTHON_CMD" ]; then
 fi
 
 # ─── LINUX: Check and install GTK/Qt backend for pywebview ───
-if [[ "$(uname -s)" == "Linux" ]]; then
+if [ "$BROWSER_MODE" -eq 0 ] && [[ "$(uname -s)" == "Linux" ]]; then
     HAS_GTK_BACKEND=0
     HAS_QT_BACKEND=0
 
@@ -137,9 +151,11 @@ fi
 
 # Check if pywebview is available
 HAS_WEBVIEW=0
-$PYTHON_CMD -c "import webview" 2>/dev/null && HAS_WEBVIEW=1
+if [ "$BROWSER_MODE" -eq 0 ]; then
+    $PYTHON_CMD -c "import webview" 2>/dev/null && HAS_WEBVIEW=1
+fi
 
-if [ "$HAS_WEBVIEW" -eq 0 ]; then
+if [ "$BROWSER_MODE" -eq 0 ] && [ "$HAS_WEBVIEW" -eq 0 ]; then
     # Try to install pywebview into the embedded Python first
     echo -e "${YELLOW}pywebview not found — attempting to install...${RESET}"
     if $PYTHON_CMD -m pip install pywebview -q 2>/dev/null; then
