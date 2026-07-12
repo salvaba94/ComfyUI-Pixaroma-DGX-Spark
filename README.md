@@ -155,6 +155,20 @@ The `run_mac_mps.sh` script includes optimizations for Apple Silicon (M1/M2) Mac
 </details>
 
 <details>
+<summary><b>ARM64 Docker CUDA Build</b></summary>
+
+Build the ARM64 CUDA Docker image with the CUDA add-ons and start ComfyUI:
+
+```bash
+docker compose -f docker-compose.arm64.yml build \
+  --progress=plain \
+  --build-arg INSTALL_ADDONS=SageAttention-NEXT,Nunchaku120-NEXT,Insightface-NEXT,Trellis2,FlashAttention \
+  --build-arg ADDON_BUILD_JOBS=1 && docker compose -f docker-compose.arm64.yml up -d
+```
+
+</details>
+
+<details>
 <summary><b>Troubleshooting Linux / Proxmox</b></summary>
 
 > For Linux/Proxmox support, contact [@VenimK](https://discord.com/users/venimk) on Discord
