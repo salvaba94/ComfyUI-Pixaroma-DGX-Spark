@@ -1,0 +1,246 @@
+{
+  "id": "e7c921f0-c513-4569-b680-aa66b66eaf12",
+  "revision": 0,
+  "last_node_id": 8,
+  "last_link_id": 15,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "MarkdownNote",
+      "pos": [
+        620,
+        2550
+      ],
+      "size": [
+        501.6563240502302,
+        238.16283016331124
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "👑 Pixaroma - Note - START HERE",
+      "properties": {},
+      "widgets_values": [
+        "# MODELS AND NODES USED IN THIS WORKFLOW  \n\n- None (PAID API NODE)\n\n## 🧩 Nodes Installed from Manager  \n\n- **rgthree-comfy**\n\n---\n\n## 📚 Resources  \n🎥 **Tutorials:** [Pixaroma YouTube Channel](https://www.youtube.com/@pixaroma)  \n💬 **Community Discord:** [Join Here](https://discord.com/invite/gggpkVgBf3)\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5,
+      "type": "Image Comparer (rgthree)",
+      "pos": [
+        1854.9960686614945,
+        2546.4182790269806
+      ],
+      "size": [
+        412.93467192717935,
+        496.0708525637052
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "dir": 3,
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 10
+        },
+        {
+          "dir": 3,
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 13
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "rgthree-comfy",
+        "ver": "8ff50e4521881eca1fe26aec9615fc9362474931",
+        "comparer_mode": "Slide"
+      },
+      "widgets_values": [
+        [
+          {
+            "name": "A",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_flrtc_00005_.png&type=temp&subfolder=&rand=0.6081786534519911"
+          },
+          {
+            "name": "B",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_flrtc_00006_.png&type=temp&subfolder=&rand=0.24363695931520346"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "type": "LoadImage",
+      "pos": [
+        1150,
+        2546.4182790269806
+      ],
+      "size": [
+        412.93467192717935,
+        496.0708525637052
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            10,
+            12
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.13.0",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "Woman1.jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "RecraftCreativeUpscaleNode",
+      "pos": [
+        1584.814410672588,
+        2623.9849159166542
+      ],
+      "size": [
+        248.80625,
+        97.72991217900517
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            13,
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.13.0",
+        "Node name for S&R": "RecraftCreativeUpscaleNode"
+      },
+      "widgets_values": [],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 6,
+      "type": "SaveImage",
+      "pos": [
+        2287.3740531370017,
+        2546.4182790269806
+      ],
+      "size": [
+        412.93467192717935,
+        496.0708525637052
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 15
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.13.0",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "Up"
+      ]
+    }
+  ],
+  "links": [
+    [
+      10,
+      4,
+      0,
+      5,
+      0,
+      "IMAGE"
+    ],
+    [
+      12,
+      4,
+      0,
+      8,
+      0,
+      "IMAGE"
+    ],
+    [
+      13,
+      8,
+      0,
+      5,
+      1,
+      "IMAGE"
+    ],
+    [
+      15,
+      8,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 1.0152559799477126,
+      "offset": [
+        -499.3999785362324,
+        -2322.053187525229
+      ]
+    },
+    "frontendVersion": "1.38.13",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

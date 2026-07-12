@@ -1,0 +1,30 @@
+services:
+  comfyui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TORCH_INSTALL_MODE: cpu
+        TORCH_INDEX_URL: https://download.pytorch.org/whl/cpu
+        ONNXRUNTIME_MODE: cpu
+        LLAMA_CPP_MODE: cpu
+        INSTALL_ADDONS: ""
+    image: comfyui-easy-install:cpu
+    container_name: comfyui
+    restart: unless-stopped
+    ports:
+      - "8188:8188"
+    environment:
+      NVIDIA_VISIBLE_DEVICES: void
+      NVIDIA_DRIVER_CAPABILITIES: ""
+      HF_HOME: /app/ComfyUI/models/.cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /app/ComfyUI/models/.cache/huggingface/hub
+      TRANSFORMERS_CACHE: /app/ComfyUI/models/.cache/huggingface/transformers
+      TORCH_HOME: /app/ComfyUI/models/.cache/torch
+      AUX_ANNOTATOR_CKPTS_PATH: /app/ComfyUI/models/controlnet_aux/ckpts
+    volumes:
+      - ./models:/app/ComfyUI/models
+      - ./input:/app/ComfyUI/input
+      - ./output:/app/ComfyUI/output
+      - ./user:/app/ComfyUI/user
+      - ./workflows:/app/ComfyUI/user/default/workflows

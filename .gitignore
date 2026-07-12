@@ -237,3 +237,16 @@ testinstaller_linux.sh
 comfyui-lxc-standalone-no-clone.sh
 .windsurf/workflows/check-windows-updates.md
 .devin/workflows/check-windows-updates.md
+
+# ComfyUI local runtime state and Docker bind mounts
+/models/
+/input/
+/output/
+/user/
+/custom_nodes/
+/workflows/Pixaroma/_zips/
+
+# Local installer/build leftovers
+*.bak
+*.tmp
+*.log

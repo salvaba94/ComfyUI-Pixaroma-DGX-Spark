@@ -1,0 +1,23 @@
+Custom nodes:
+
+Copy the folder ComfyUI-PixaBunny and ComfyUI-PixaTools in the custom_nodes folder ..ComfyUI\custom_nodes
+restart comfyui
+and you should have the node just like I show in episode 12 PixaFrame and the PixaCoolFrames, you place those nodes between a load image and save image node. 
+
+----
+
+
+Useful links
+https://www.youtube.com/@pixaroma
+
+Claude Download
+https://claude.com/download
+
+Google Gemini
+https://gemini.google.com/
+
+Comfyui Registry
+https://registry.comfy.org/
+
+How to publish nodes
+https://docs.comfy.org/registry/publishing

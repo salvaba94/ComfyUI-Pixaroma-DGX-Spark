@@ -1,0 +1,244 @@
+{
+  "id": "4e435351-0657-4c32-be1b-5d2d165f4633",
+  "revision": 0,
+  "last_node_id": 15,
+  "last_link_id": 11,
+  "nodes": [
+    {
+      "id": 10,
+      "type": "MarkdownNote",
+      "pos": [
+        -1797.3282613005777,
+        1263.855454927179
+      ],
+      "size": [
+        413.42953782400446,
+        333.40230196503444
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "tags",
+      "properties": {},
+      "widgets_values": [
+        "## Fine-Grained Inline Control\n\nS2 Pro lets you control speech by adding natural-language instructions directly in the text with **[tag]** syntax.\n\nUnlike a fixed tag system, it supports free-form prompts such as  \n[whisper in small voice] [professional broadcast tone] [pitch up]\n\nThis allows more precise control over tone, emotion, pacing, and delivery.\n\n## Common tags\n**15,000+ unique tags supported**\n\n[pause] [emphasis] [laughing] [inhale] [chuckle] [tsk] [singing] [excited] [laughing tone] [interrupting] [chuckling] [excited tone] [volume up] [echo] [angry] [low volume] [sigh] [low voice] [whisper] [screaming] [shouting] [loud] [surprised] [short pause] [exhale] [delight] [panting] [audience laughter] [with strong accent] [volume down] [clearing throat] [sad] [moaning] [shocked]\n\n## More info\n[Read more on Hugging Face](https://huggingface.co/fishaudio/s2-pro)"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 9,
+      "type": "MarkdownNote",
+      "pos": [
+        -1364.6152125682258,
+        1260.8059622069222
+      ],
+      "size": [
+        418.88408327854995,
+        452.9054108739472
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Instructions",
+      "properties": {},
+      "widgets_values": [
+        "**Models auto-download on first run**  \nNo manual setup needed.\n\nSelect the model you want in Fish S2 TTS node -> **model_path**.\n\n## Default model: s2-pro-fp8\nRequires about **20 GB VRAM**\n\n| Model | VRAM | Size |\n|---|---:|---:|\n| s2-pro (bf16) | ~24 GB | ~10 GB |\n| s2-pro-fp8 | ~20 GB | ~8 GB |\n| s2-pro-BNB-int8 | ~20 GB | ~10 GB |\n| s2-pro-BNB-nf4 | ~16 GB | ~10 GB |\n\n## Manual download\n\nDownload **all files** for the selected model.\n\n| Model | Size | Download | Path |\n|---|---:|---|---|\n| s2-pro (bf16) | ~10 GB | [Open files](https://huggingface.co/fishaudio/s2-pro/tree/main) | `ComfyUI\\models\\fishaudioS2\\s2-pro` |\n| s2-pro-fp8 | ~8 GB | [Open files](https://huggingface.co/drbaph/s2-pro-fp8/tree/main) | `ComfyUI\\models\\fishaudioS2\\s2-pro-fp8` |\n\n## !!! RESEARCH & NON-COMMERCIAL USE LICENSE\n\n## [Read More HERE](https://huggingface.co/fishaudio/s2-pro/blob/main/LICENSE.md)\n"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 15,
+      "type": "FishS2TTS",
+      "pos": [
+        -1364.6152125682258,
+        766.50257379391
+      ],
+      "size": [
+        418.88408327854995,
+        448
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI-fish-audio-s2",
+        "ver": "9024ae77e2936d256bc33af9139d7de9ad9102eb",
+        "Node name for S&R": "FishS2TTS"
+      },
+      "widgets_values": [
+        "s2-pro-fp8",
+        "Hello! [excited] This is Fish Audio S2.",
+        "auto",
+        "auto",
+        "auto",
+        "auto",
+        0,
+        200,
+        0.8,
+        0.8,
+        1.1,
+        265423112,
+        "randomize",
+        true,
+        false,
+        false
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 6,
+      "type": "SaveAudioMP3",
+      "pos": [
+        -926.4476183813285,
+        766.50257379391
+      ],
+      "size": [
+        413.42953782400446,
+        136
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 11
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.18.1",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/voice",
+        "V0"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "easy positive",
+      "pos": [
+        -1797.3282613005777,
+        766.50257379391
+      ],
+      "size": [
+        413.42953782400446,
+        450.09921794292427
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "title": "1. Speech Text",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "337a03bb19273ee084e56b16a59ad35cb07a1a04",
+        "Node name for S&R": "easy positive"
+      },
+      "widgets_values": [
+        "[A cheerful female voice with a joking, playful tone] [happy] I clicked one button, everything broke, and for a second .. [pause] I just stared at the screen! [pause], [laughing] [laughing] Honestly, it was kind of impressive."
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 12,
+      "type": "MarkdownNote",
+      "pos": [
+        -2368.2231282147477,
+        767.1332304952747
+      ],
+      "size": [
+        550.944668994104,
+        254.29529264347457
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "👑 Pixaroma - Note",
+      "properties": {},
+      "widgets_values": [
+        "## Models auto-download on first run\n## Check the instructions note (You need ~20GB VRAM)\n\n---\n\n## 🧩 Nodes Installed from Manager  \n\n- ComfyUI-Easy-Use\n- Fish Audio S2 TTS\n\n---\n\n## 📚 Resources  \n🎥 **Tutorials:** [Pixaroma YouTube Channel](https://www.youtube.com/@pixaroma)  \n💬 **Community Discord:** [Join Here](https://discord.com/invite/gggpkVgBf3)\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      10,
+      5,
+      0,
+      15,
+      0,
+      "STRING"
+    ],
+    [
+      11,
+      15,
+      0,
+      6,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1,
+      "offset": [
+        2524.9524663653897,
+        -597.9402133646895
+      ]
+    },
+    "frontendVersion": "1.41.21",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

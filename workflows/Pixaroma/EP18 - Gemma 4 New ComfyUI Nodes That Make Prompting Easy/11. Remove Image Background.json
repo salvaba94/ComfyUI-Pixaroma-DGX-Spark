@@ -1,0 +1,337 @@
+{
+  "id": "b5f62473-56a2-433a-a95a-511f976795c1",
+  "revision": 0,
+  "last_node_id": 12,
+  "last_link_id": 10,
+  "nodes": [
+    {
+      "id": 9,
+      "type": "MaskPreview",
+      "pos": [
+        -5424.018996964668,
+        1997.013496833874
+      ],
+      "size": [
+        231.39192378025473,
+        258
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "MaskPreview"
+      },
+      "widgets_values": [],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 7,
+      "type": "MaskPreview",
+      "pos": [
+        -5676.75180545439,
+        1997.013496833874
+      ],
+      "size": [
+        231.39192378025473,
+        258
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "MaskPreview"
+      },
+      "widgets_values": [],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 5,
+      "type": "SaveImage",
+      "pos": [
+        -5676.751805454392,
+        1437.4447680321348
+      ],
+      "size": [
+        484.12473226997736,
+        496.4456848300497
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 1,
+      "type": "PixaromaNote",
+      "pos": [
+        -7035.381305182639,
+        1437.4447680321348
+      ],
+      "size": [
+        561.7469093181035,
+        839.2631436368658
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "1227d9898f9d5137533df750611ca97e8c738f3d",
+        "Node name for S&R": "PixaromaNote"
+      },
+      "widgets_values": [
+        "{\"version\":1,\"content\":\"<h2>MODELS AND NODES USED IN THIS WORKFLOW</h2><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><h3><span data-ic=\\\"model-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Remove Background Pixaroma</h3><p>\\n\\n</p><p><strong>You can use 3 Different Models:</strong></p><p>\\n\\n</p><p><strong><em>birefnet.safetensors (Standard) - Needs 4-6 GB VRAM</em></strong></p><p>\\n\\n</p><ul>\\n  <li>Internal resolution: 1024\u00d71024</li>\\n  <li>Best for: clean objects, products, logos. Fast everyday cutouts.</li>\\n</ul><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download birefnet.safetensors<span class=\\\"pix-note-btnsize\\\">424 MB</span></a>\\n</span>&nbsp;\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #888888\\\">Place in: ComfyUI/models/background_removal</div><p>\\n\\n</p><hr class=\\\"pix-note-hr-dashed\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><p><strong><em>birefnet-hr.safetensors (High Resolution) - Needs 8 GB+ VRAM</em></strong></p><p>\\n\\n</p><ul>\\n  <li>Internal resolution: 2048\u00d72048</li>\\n  <li>Best for: large images needing fine outline detail.</li>\\n  <li><span data-ic=\\\"warning-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;After download, rename <code>model.safetensors</code> to <code>birefnet-hr.safetensors</code></li>\\n</ul><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/ZhengPeng7/BiRefNet_HR/resolve/main/model.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download birefnet-hr.safetensors<span class=\\\"pix-note-btnsize\\\">444 MB</span></a>\\n</span>&nbsp;\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #888888\\\">Place in: ComfyUI/models/background_removal</div><p>\\n\\n</p><hr class=\\\"pix-note-hr-dashed\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><p><strong><em>birefnet-matting.safetensors (Soft Alpha Edges) - Needs 8 GB+ VRAM</em></strong></p><p>\\n\\n</p><ul>\\n  <li>Internal resolution: 2048\u00d72048</li>\\n  <li>Best for: hair, fur, lace, soft fabric, glass, smoke, and sheer materials.</li>\\n  <li><span data-ic=\\\"warning-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;After download, rename <code>model.safetensors</code> to <code>birefnet-matting.safetensors</code></li>\\n</ul><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/ZhengPeng7/BiRefNet_HR-matting/resolve/main/model.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download birefnet-matting.safetensors<span class=\\\"pix-note-btnsize\\\">444 MB</span></a>\\n</span>&nbsp;\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #888888\\\">Place in: ComfyUI/models/background_removal</div><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><p><span data-ic=\\\"warning-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;After placing the files, <span style=\\\"color: #f66744\\\">restart</span> ComfyUI or refresh model lists using <span style=\\\"color: #f66744\\\">R</span> shortcut.</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><h3><span data-ic=\\\"nodes-installed\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Custom Nodes</h3><p>\\n\\n</p><ul>\\n  <li>Pixaroma</li>\\n</ul><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #666666\\\"><p>\\n\\n</p><h3><span data-ic=\\\"pixaroma\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Resources</h3><p>\\n\\n</p><p>\\n  <a class=\\\"pix-note-discord\\\" href=\\\"https://discord.com/invite/gggpkVgBf3\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Join Discord</a>&nbsp;\\n  <a class=\\\"pix-note-yt\\\" href=\\\"https://www.youtube.com/@pixaroma\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Pixaroma YouTube Channel</a>&nbsp;\\n</p>\",\"buttonColor\":\"#f66744\",\"lineColor\":\"#f66744\",\"width\":557.087617540421,\"height\":818.4429544967918,\"backgroundColor\":\"#2a2a2a\"}",
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        -6443.810242863821,
+        1437.4447680321348
+      ],
+      "size": [
+        396.6592917776825,
+        496.4456848300497
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "BunnyExplorer.png",
+        "image"
+      ],
+      "color": "#004835",
+      "bgcolor": "#1d1d1d"
+    },
+    {
+      "id": 11,
+      "type": "PixaromaRemoveBackground",
+      "pos": [
+        -6011.004837869603,
+        1437.4447680321348
+      ],
+      "size": [
+        301.80625,
+        98
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            9
+          ]
+        },
+        {
+          "name": "inverted_mask",
+          "type": "MASK",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "5591baddfa890a6674d060ecae37154ed0276b99",
+        "Node name for S&R": "PixaromaRemoveBackground"
+      },
+      "widgets_values": [
+        "birefnet.safetensors"
+      ],
+      "color": "#004835",
+      "bgcolor": "#1d1d1d"
+    },
+    {
+      "id": 12,
+      "type": "PixaromaLabel",
+      "pos": [
+        -7035.381305182639,
+        1317.4447680321348
+      ],
+      "size": [
+        643,
+        57
+      ],
+      "flags": {
+        "no_title": true
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "a3d3f7ffb758f9eed552bc5b60493ac1af301a57",
+        "Node name for S&R": "PixaromaLabel"
+      },
+      "widgets_values": [
+        "{\"text\": \"Click Run: the node detects the subject and cuts the background away.\\nThe image with transparent background saves to disk; the subject mask and its inverse show as previews.\", \"fontSize\": 13, \"fontFamily\": \"Arial\", \"fontColor\": \"#c0c0c0\", \"textAlign\": \"left\", \"backgroundColor\": \"#333333\", \"padding\": 10, \"borderRadius\": 0, \"opacity\": 1, \"fontWeight\": \"normal\", \"lineHeight\": 1.4}"
+      ],
+      "color": "transparent",
+      "bgcolor": "transparent"
+    },
+    {
+      "id": 10,
+      "type": "PixaromaLabel",
+      "pos": [
+        -7035.381305182639,
+        1267.4447680321348
+      ],
+      "size": [
+        392,
+        50
+      ],
+      "flags": {
+        "no_title": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaLabel",
+        "aux_id": "pixaroma/ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        "{\"text\":\"Remove Image Background\",\"fontSize\":30,\"fontFamily\":\"Arial\",\"fontColor\":\"#ffffff\",\"textAlign\":\"left\",\"backgroundColor\":\"#f66744\",\"padding\":10,\"borderRadius\":0,\"opacity\":1,\"fontWeight\":\"normal\",\"lineHeight\":1}"
+      ],
+      "color": "transparent",
+      "bgcolor": "transparent"
+    }
+  ],
+  "links": [
+    [
+      7,
+      2,
+      0,
+      11,
+      0,
+      "IMAGE"
+    ],
+    [
+      8,
+      11,
+      0,
+      5,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      11,
+      1,
+      7,
+      0,
+      "MASK"
+    ],
+    [
+      10,
+      11,
+      2,
+      9,
+      0,
+      "MASK"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8782679851457293,
+      "offset": [
+        7227.674073878123,
+        -1057.5524743626236
+      ]
+    },
+    "frontendVersion": "1.43.18",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

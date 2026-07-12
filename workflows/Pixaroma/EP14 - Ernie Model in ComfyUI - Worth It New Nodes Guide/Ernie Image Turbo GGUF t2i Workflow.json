@@ -1,0 +1,592 @@
+{
+  "id": "8ac9d80c-87d5-4bb4-b650-318f91d2b7f6",
+  "revision": 0,
+  "last_node_id": 14,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "CLIPLoader",
+      "pos": [
+        -980.300380983629,
+        661
+      ],
+      "size": [
+        336.51407470237154,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "ministral-3-3b.safetensors",
+        "flux2",
+        "default"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "VAELoader",
+      "pos": [
+        -980.300380983629,
+        830
+      ],
+      "size": [
+        336.51407470237154,
+        58
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "KSampler",
+      "pos": [
+        -148.87416758191392,
+        540
+      ],
+      "size": [
+        242.85130677549887,
+        262
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 4
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 5
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        897123586006589,
+        "randomize",
+        8,
+        1,
+        "euler",
+        "simple",
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "VAEDecode",
+      "pos": [
+        114.31054729809014,
+        540
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 2
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 11,
+      "type": "PixaromaResolution",
+      "pos": [
+        -409.7750293835011,
+        951.2662188198962
+      ],
+      "size": [
+        240,
+        336
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "width",
+          "type": "INT",
+          "links": [
+            12
+          ]
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "pixaroma/ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaResolution",
+        "cnr_id": "ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        {
+          "mode": "preset",
+          "ratio": "1:1",
+          "w": 1024,
+          "h": 1024,
+          "custom_w": 1024,
+          "custom_h": 1024,
+          "snap": 16
+        }
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 8,
+      "type": "SaveImage",
+      "pos": [
+        114.31054729809014,
+        649.9165193973773
+      ],
+      "size": [
+        569.8562317309822,
+        634.9452777969907
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "img"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -620,
+        540
+      ],
+      "size": [
+        450.2249706164989,
+        349.3173777670912
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            6,
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "A highly detailed cute cartoon bunny character, full body, standing upright on a tropical beach in a playful and confident pose, slightly leaning forward with one hand touching its mouth in a curious thinking gesture, head slightly tilted. The bunny has large expressive blue eyes with glossy reflections, soft fluffy white fur with fine realistic strands, rounded chubby cheeks with soft pink blush, a small pink nose, short muzzle, and a slightly open mouth creating an innocent, surprised expression.\nOversized upright ears with soft pink inner fur and subtle translucency, compact plush-like body with short limbs and rounded proportions, small soft feet with visible fur detail. The bunny is wearing a simple bright orange t-shirt with no logo or text, slightly fitted over its round belly.\nThe environment is a stunning exotic beach with golden sand, crystal-clear turquoise water, gentle waves touching the shore, and lush palm trees leaning toward the ocean. In the background, tropical vegetation, distant rocky islands, and a glowing warm sunset sky with soft clouds. Light reflects beautifully on the water surface.\nCinematic composition, slightly low angle, character centered in the foreground, palm trees framing the scene. High-end 3D cartoon rendering, ultra-smooth lighting, warm golden hour sunlight, soft shadows, global illumination, subsurface scattering visible in ears and cheeks, shallow depth of field, ultra clean render, highly polished, vibrant colors, 8k quality."
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 7,
+      "type": "EmptyFlux2LatentImage",
+      "pos": [
+        -148.87416758191392,
+        926.3398872552965
+      ],
+      "size": [
+        242.85130677549887,
+        106
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": 12
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "EmptyFlux2LatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ]
+    },
+    {
+      "id": 1,
+      "type": "UnetLoaderGGUF",
+      "pos": [
+        -980.300380983629,
+        540
+      ],
+      "size": [
+        336.51407470237154,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI-GGUF",
+        "ver": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+        "Node name for S&R": "UnetLoaderGGUF"
+      },
+      "widgets_values": [
+        "ernie\\ernie-image-turbo-Q8_0.gguf"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        -373.9097950085011,
+        469.37825005711403
+      ],
+      "size": [
+        204.134765625,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.19.2",
+        "Node name for S&R": "ConditioningZeroOut"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 13,
+      "type": "PixaromaNote",
+      "pos": [
+        -1424.1160018529226,
+        540
+      ],
+      "size": [
+        422.6222859501522,
+        567.3621068404284
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "aux_id": "pixaroma/ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaNote",
+        "cnr_id": "ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        "{\"version\":1,\"content\":\"<h2>MODELS AND NODES USED IN THIS WORKFLOW</h2><p>\\n\\n</p><hr><p>\\n\\n</p><h2><span data-ic=\\\"GGUF\\\" class=\\\"pix-note-ic\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Unet Loader (GGUF)</h2><p>\\n\\n</p><p><span class=\\\"pix-note-btnblock\\\"><a class=\\\"pix-note-dl\\\" href=\\\"https://huggingface.co/unsloth/ERNIE-Image-Turbo-GGUF/resolve/main/ernie-image-turbo-Q8_0.gguf\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download Ernie Image Turbo Q8 GGUF<span class=\\\"pix-note-btnsize\\\">8.69 GB</span></a><span class=\\\"pix-note-folderhint\\\">Place in: ComfyUI/models/diffusion_models/ernie</span></span>&nbsp;</p><p>\\n\\n</p><p>OR get a different Q version from&nbsp;<span class=\\\"pix-note-btnblock\\\"><a class=\\\"pix-note-dl\\\" href=\\\"https://huggingface.co/unsloth/ERNIE-Image-Turbo-GGUF/tree/main\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">HERE</a></span>&nbsp;</p><hr><p></p><p>\\n\\n</p><h2><span data-ic=\\\"CLIP\\\" class=\\\"pix-note-ic\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Load Clip</h2><p><span class=\\\"pix-note-btnblock\\\"><a class=\\\"pix-note-dl\\\" href=\\\"https://huggingface.co/Comfy-Org/ERNIE-Image/resolve/main/text_encoders/ministral-3-3b.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download Ministral-3-3b<span class=\\\"pix-note-btnsize\\\">7.18 GB</span></a><span class=\\\"pix-note-folderhint\\\">Place in: ComfyUI/models/text_encoders</span></span>&nbsp;</p><p>\\n\\n</p><hr><p>\\n\\n</p><h2><span data-ic=\\\"VAE\\\" class=\\\"pix-note-ic\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Load Vae</h2><p><span class=\\\"pix-note-btnblock\\\"><a class=\\\"pix-note-dl\\\" href=\\\"https://huggingface.co/Comfy-Org/ERNIE-Image/resolve/main/vae/flux2-vae.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download Flux 2 VAE<span class=\\\"pix-note-btnsize\\\">320 MB</span></a><span class=\\\"pix-note-folderhint\\\">Place in: ComfyUI/models/vae</span></span>&nbsp;</p><hr><h2><span data-ic=\\\"nodes-installed\\\" class=\\\"pix-note-ic\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Custom Nodes</h2><p></p><ul><li>Pixaroma</li></ul><hr><h2><span data-ic=\\\"pixaroma\\\" class=\\\"pix-note-ic\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Resources</h2><p><a class=\\\"pix-note-discord\\\" href=\\\"https://discord.com/invite/gggpkVgBf3\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Join Discord</a>&nbsp;<a class=\\\"pix-note-yt\\\" href=\\\"https://www.youtube.com/@pixaroma\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Pixaroma YouTube Channel</a>&nbsp;</p><p></p>\",\"buttonColor\":\"#f66744\",\"lineColor\":\"#888888\",\"width\":422.6222859501522,\"height\":567.3621068404284,\"backgroundColor\":\"#2a2a2a\"}",
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 14,
+      "type": "PixaromaLabel",
+      "pos": [
+        -1423.0364515528804,
+        423.8621177311658
+      ],
+      "size": [
+        466,
+        46
+      ],
+      "flags": {
+        "no_title": true
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "aux_id": "pixaroma/ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaLabel",
+        "cnr_id": "ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        "{\"text\":\"Ernie Image Turbo GGUF t2i Workflow\",\"fontSize\":26,\"fontFamily\":\"Arial\",\"fontColor\":\"#ffffff\",\"textAlign\":\"left\",\"backgroundColor\":\"#2a2a2a\",\"padding\":10,\"borderRadius\":0,\"opacity\":1,\"fontWeight\":\"normal\",\"lineHeight\":1}"
+      ],
+      "color": "transparent",
+      "bgcolor": "transparent"
+    }
+  ],
+  "links": [
+    [
+      1,
+      6,
+      0,
+      8,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      5,
+      0,
+      6,
+      0,
+      "LATENT"
+    ],
+    [
+      3,
+      3,
+      0,
+      6,
+      1,
+      "VAE"
+    ],
+    [
+      4,
+      1,
+      0,
+      5,
+      0,
+      "MODEL"
+    ],
+    [
+      5,
+      9,
+      0,
+      5,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      6,
+      4,
+      0,
+      9,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      4,
+      0,
+      5,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      2,
+      0,
+      4,
+      0,
+      "CLIP"
+    ],
+    [
+      9,
+      7,
+      0,
+      5,
+      3,
+      "LATENT"
+    ],
+    [
+      12,
+      11,
+      0,
+      7,
+      0,
+      "INT"
+    ],
+    [
+      13,
+      11,
+      1,
+      7,
+      1,
+      "INT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7379774169553452,
+      "offset": [
+        1597.8089573288694,
+        -212.95226879560022
+      ]
+    },
+    "frontendVersion": "1.42.14",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

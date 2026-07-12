@@ -1,0 +1,637 @@
+{
+  "id": "6f8f9208-5490-43b4-b360-dd30c567f62a",
+  "revision": 0,
+  "last_node_id": 24,
+  "last_link_id": 14,
+  "nodes": [
+    {
+      "id": 4,
+      "type": "CLIPLoader",
+      "pos": [
+        47.963227298643076,
+        516.7931352312914
+      ],
+      "size": [
+        455.7639795939126,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5gemma_b_b_ul2.safetensors",
+        "stable_audio",
+        "default"
+      ],
+      "color": "#1e2833",
+      "bgcolor": "#364454"
+    },
+    {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [
+        534.0128729262196,
+        355.68993224450645
+      ],
+      "size": [
+        273.24596051034496,
+        88
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 7
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            2,
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 9,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        532.5555213558519,
+        519.1239713604122
+      ],
+      "size": [
+        204.134765625,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "ConditioningZeroOut"
+      },
+      "widgets_values": [],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 8,
+      "type": "KSampler",
+      "pos": [
+        837.5444994702286,
+        355.68993224450645
+      ],
+      "size": [
+        270,
+        262
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 2
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 5
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        128920449346267,
+        "randomize",
+        8,
+        1,
+        "lcm",
+        "simple",
+        1
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 10,
+      "type": "VAEDecodeAudio",
+      "pos": [
+        1137.8301655038927,
+        355.68993224450645
+      ],
+      "size": [
+        164.2388671875,
+        46
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 8
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "VAEDecodeAudio"
+      },
+      "widgets_values": [],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        45.7340606319765,
+        355.68993224450645
+      ],
+      "size": [
+        457.9931462605792,
+        98
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": []
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "stableaudio3\\stable_audio_3_medium.safetensors"
+      ],
+      "color": "#1e2833",
+      "bgcolor": "#364454"
+    },
+    {
+      "id": 13,
+      "type": "PixaromaNumber",
+      "pos": [
+        247.04454807517482,
+        951.7015820216598
+      ],
+      "size": [
+        256.68265881738085,
+        78
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "int",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "float",
+          "type": "FLOAT",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "title": "Duration (1-380 seconds)",
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "f5a68e8b5c0e3eb27891915f6075b8ec3dae6509",
+        "Node name for S&R": "PixaromaNumber"
+      },
+      "widgets_values": [
+        30
+      ],
+      "color": "#0c362e",
+      "bgcolor": "#186253"
+    },
+    {
+      "id": 3,
+      "type": "PixaromaLabel",
+      "pos": [
+        -511.79373776057776,
+        239.10125645655216
+      ],
+      "size": [
+        411,
+        56
+      ],
+      "flags": {
+        "no_title": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaLabel",
+        "aux_id": "pixaroma/ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        "{\"text\":\"Stable Audio 3 txt2audio\",\"fontSize\":36,\"fontFamily\":\"Arial\",\"fontColor\":\"#ffffff\",\"textAlign\":\"left\",\"backgroundColor\":\"#f66744\",\"padding\":10,\"borderRadius\":0,\"opacity\":1,\"fontWeight\":\"normal\",\"lineHeight\":1}"
+      ],
+      "color": "transparent",
+      "bgcolor": "transparent"
+    },
+    {
+      "id": 2,
+      "type": "PixaromaNote",
+      "pos": [
+        -511.79373776057776,
+        355.68993224450645
+      ],
+      "size": [
+        523.4343023813685,
+        488.56950858178766
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "1227d9898f9d5137533df750611ca97e8c738f3d",
+        "Node name for S&R": "PixaromaNote"
+      },
+      "widgets_values": [
+        "{\"version\":1,\"content\":\"<h2>MODELS AND NODES USED IN THIS WORKFLOW</h2><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: gray\\\"><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><h3><span data-ic=\\\"checkpoint-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Load Checkpoint</h3><p>\\n\\n</p><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/Comfy-Org/stable-audio-3/resolve/main/checkpoints/stable_audio_3_medium.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download stable_audio_3_medium.safetensors<span class=\\\"pix-note-btnsize\\\">8.6 GB</span></a>\\n</span>&nbsp;\\n</p><p>\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #f66744\\\">Place in: ComfyUI/models/checkpoints/stableaudio3</div><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: gray\\\"><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><h3><span data-ic=\\\"CLIP\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Load CLIP</h3><p>\\n\\n</p><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/Comfy-Org/stable-audio-3/resolve/main/text_encoders/t5gemma_b_b_ul2.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download t5gemma_b_b_ul2.safetensors<span class=\\\"pix-note-btnsize\\\">1.1 GB</span></a>\\n</span>&nbsp;\\n</p><p>\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #f66744\\\">Place in: ComfyUI/models/text_encoders</div><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: gray\\\"><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><p><span data-ic=\\\"warning-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;After placing the files, <span style=\\\"color: #f66744\\\">restart</span> ComfyUI or refresh model lists using <span style=\\\"color: #f66744\\\">R</span> shortcut.</p><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: gray\\\"><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><h3><span data-ic=\\\"nodes-installed\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Custom Nodes</h3><p>\\n\\n</p><p>\\n</p><p>\\n\\n</p><ul>\\n  <li>Pixaroma</li>\\n</ul><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: gray\\\"><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><h3><span data-ic=\\\"pixaroma\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Resources</h3><p>\\n\\n</p><p>\\n\\n</p><p>\\n\\n</p><p>\\n  <a class=\\\"pix-note-discord\\\" href=\\\"https://discord.com/invite/gggpkVgBf3\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Join Discord</a>&nbsp;\\n\\n  <a class=\\\"pix-note-yt\\\" href=\\\"https://www.youtube.com/@pixaroma\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Pixaroma YouTube Channel</a>&nbsp;\\n</p>\",\"buttonColor\":\"#f66744\",\"lineColor\":\"#f66744\",\"width\":523.4343023813685,\"height\":488.56950858178766,\"backgroundColor\":\"#2a2a2a\"}",
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 24,
+      "type": "PixaromaNote",
+      "pos": [
+        -845.4932739396278,
+        918.5983790348747
+      ],
+      "size": [
+        857.1338385604186,
+        862.076516157544
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "1227d9898f9d5137533df750611ca97e8c738f3d",
+        "Node name for S&R": "PixaromaNote"
+      },
+      "widgets_values": [
+        "{\"version\":1,\"content\":\"<h1 style=\\\"text-align: center\\\">Stable Audio Prompts</h1><p>\\n</p><p style=\\\"text-align: center\\\"><b>Each prompt is in its own copyable code block.</b></p><p>\\n</p><hr class=\\\"pix-note-hr-thick\\\" style=\\\"color: #f66744\\\"><p>\\n\\n</p><h2>Cinematic Orchestra</h2><p>\\n</p><pre><code>Emotional cinematic piano and strings with slow chord movement, intimate cello melody, soft room tone, bittersweet atmosphere.</code></pre><p>\\n</p><pre><code>Suspense thriller underscore with pulsing low strings, ticking percussion, muted piano hits, unresolved harmonic tension.</code></pre><p>\\n</p><pre><code>Magical discovery cue with harp, celesta, soft flutes, shimmering strings, gentle wonder, warm fairytale atmosphere.</code></pre><p>\\n\\n</p><h2>Electronic Music</h2><p>\\n</p><pre><code>Dark techno groove with saturated kick, modular bass sequence, metallic percussion, warehouse reverb, relentless energy.</code></pre><p>\\n</p><pre><code>Synthwave night-drive instrumental with analog bass, gated drums, glassy lead synth, neon city atmosphere.</code></pre><p>\\n</p><pre><code>Retro arcade electro with chiptune leads, punchy drums, playful synth bass, bright game-like energy.</code></pre><p>\\n\\n</p><h2>Hip Hop and Beats</h2><p>\\n</p><pre><code>Lo-fi hip hop beat with mellow piano, soft drums, tape hiss, warm bass, rainy-window mood.</code></pre><p>\\n</p><pre><code>West Coast hip hop beat with funky bass, talkbox-style synth lead, crisp clap, sunny boulevard energy.</code></pre><p>\\n</p><pre><code>Soulful R&amp;B beat with smooth electric piano, soft snare, deep bass, gentle melodic hooks.</code></pre><p>\\n\\n</p><h2>Rock and Guitar</h2><p>\\n</p><pre><code>Heavy metal riff with distorted guitars, double-kick drums, aggressive bass, dark minor-key energy.</code></pre><p>\\n</p><pre><code>Desert rock groove with fuzzy guitars, dry drums, heavy bass, wide open-road atmosphere.</code></pre><p>\\n</p><pre><code>Punk rock instrumental with fast drums, raw guitars, energetic bass, short aggressive structure.</code></pre><p>\\n\\n</p><h2>Jazz and Blues</h2><p>\\n</p><pre><code>Jazz trio with piano, upright bass, ride cymbal, smoky club ambience, tasteful improvisational phrasing.</code></pre><p>\\n</p><pre><code>Lounge jazz with vibraphone, soft piano, brushed snare, upright bass, relaxed cocktail atmosphere.</code></pre><p>\\n</p><pre><code>Smooth jazz instrumental with clean guitar, electric piano, soft saxophone, polished evening mood.</code></pre><p>\\n\\n</p><h2>Isolated Instruments</h2><p>\\n</p><pre><code>Delicate solo nylon-string acoustic guitar fingerpicking, intimate body resonance, subtle room tone, warm close-mic sound.</code></pre><p>\\n</p><pre><code>Upright bass pizzicato line with woody attack, finger noise, jazz room ambience, warm natural tone.</code></pre><p>\\n</p><pre><code>Tribal African drums solo, isolated.</code></pre><p>\\n\\n</p><h2>Environmental Ambience</h2><p>\\n</p><pre><code>Tropical rainforest dawn with layered insects, distant birds, faint wet foliage movement.</code></pre><p>\\n</p><pre><code>Spaceship engine room with low reactor hum, servo ticks, air circulation, distant metallic resonance.</code></pre><p>\\n</p><pre><code>Subway platform ambience with distant train rumble, PA texture, footsteps, urban reverb.</code></pre><p>\\n\\n</p><h2>Foley Sounds</h2><p>\\n</p><pre><code>Footsteps on gravel at medium pace, alternating left-right detail, outdoor realism.</code></pre><p>\\n</p><pre><code>Pencil scribbling on textured paper, natural pressure variation, close desk sound.</code></pre><p>\\n</p><pre><code>Backpack zipper opening with fabric movement, metal pull detail, close realistic recording.</code></pre><p>\\n\\n</p><h2>Impacts and Hits</h2><p>\\n</p><pre><code>Low cinematic boom hit with dense sub weight, soft noisy tail, modern trailer sound design.</code></pre><p>\\n</p><pre><code>Trailer-style drum hit with taiko body, metal layer, huge reverb tail, dramatic emphasis.</code></pre><p>\\n</p><pre><code>Short punch impact with tight low end, skin slap detail, dry action-scene realism.</code></pre><p>\\n\\n</p><h2>UI and App Sounds</h2><p>\\n</p><pre><code>Clean UI select click with modern glass-like transient, tiny tonal tail, premium software feel.</code></pre><p>\\n</p><pre><code>Minimal phone notification sound with clear attack, soft decay, modern friendly tone.</code></pre><p>\\n</p><pre><code>Payment success sound with elegant two-note chime, soft shimmer, premium checkout confirmation.</code></pre><p>\\n\\n</p><h2>Game Audio</h2><p>\\n</p><pre><code>Treasure chest opening with wooden creak, metal latch, gold sparkle, satisfying reveal.</code></pre><p>\\n</p><pre><code>Sword swing heavy attack with broad air displacement, metal resonance, aggressive low whoosh.</code></pre><p>\\n</p><pre><code>Zombie groan with dry throat rasp, slow breath, unsettling human-like decay.</code></pre><p>\\n\\n</p><h2>Sci-Fi Sound Design</h2><p>\\n</p><pre><code>Spaceship door opening with hydraulic hiss, servo motors, metal panel slide, pressurized air release.</code></pre><p>\\n</p><pre><code>Robot head movement with tiny servos.</code></pre><p>\\n</p><pre><code>Space station alarm with pulsing siren, warning tones, distant PA distortion, emergency atmosphere.</code></pre><p>\\n\\n</p><h2>Mechanical and Industrial</h2><p>\\n</p><pre><code>Clockwork mechanism loop with tiny gears, spring tension, precise repeated motion, metallic detail.</code></pre><p>\\n</p><pre><code>Old elevator start and stop with cable tension, motor hum, relay clicks, building resonance.</code></pre><p>\\n</p><pre><code>Rusty chain pulley movement with metal strain, creaks, heavy suspended load.</code></pre><p>\\n\\n</p><h2>Vehicles</h2><p>\\n</p><pre><code>Diesel truck engine idle with low vibration, mechanical clatter, distant exhaust texture.</code></pre><p>\\n</p><pre><code>Helicopter flyover with rotor blade slap, Doppler movement, heavy air pressure.</code></pre><p>\\n</p><pre><code>Old boat engine chugging on calm water, motor sputter, small wave movement.</code></pre><p>\\n\\n</p><h2>Animal Sounds</h2><p>\\n</p><pre><code>Wolf howl at night with distant forest echo, cold air, lonely sustained tone, natural outdoor ambience.</code></pre><p>\\n</p><pre><code>Cat meow with soft vocal tone, close domestic room sound, gentle curious expression.</code></pre><p>\\n</p><pre><code>Owl hoot at night with soft forest echo, cold air, quiet nocturnal ambience.</code></pre>\",\"buttonColor\":\"#f66744\",\"lineColor\":\"#f66744\",\"width\":523.4343023813685,\"height\":488.56950858178766,\"backgroundColor\":\"#2a2a2a\"}",
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 11,
+      "type": "SaveAudioMP3",
+      "pos": [
+        1137.8301655038927,
+        481.6899322445065
+      ],
+      "size": [
+        357.8157390247691,
+        136
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/stableaudio",
+        "V0"
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 14,
+      "type": "PixaromaText",
+      "pos": [
+        48.018518184386274,
+        685.8963382180764
+      ],
+      "size": [
+        455.7086887081694,
+        202.70204081679833
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            12
+          ]
+        }
+      ],
+      "title": "Single Prompt",
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "f5a68e8b5c0e3eb27891915f6075b8ec3dae6509",
+        "Node name for S&R": "PixaromaText"
+      },
+      "widgets_values": [
+        "Dark techno groove with saturated kick, modular bass sequence, metallic percussion, warehouse reverb, relentless energy.",
+        ""
+      ],
+      "color": "#0c362e",
+      "bgcolor": "#186253"
+    },
+    {
+      "id": 12,
+      "type": "EmptyLatentAudio",
+      "pos": [
+        532.5555213558519,
+        609.1656380270787
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "seconds",
+          "type": "FLOAT",
+          "widget": {
+            "name": "seconds"
+          },
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.2",
+        "Node name for S&R": "EmptyLatentAudio"
+      },
+      "widgets_values": [
+        47.6,
+        1
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      5,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      4,
+      5,
+      0,
+      9,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      5,
+      9,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      4,
+      0,
+      5,
+      0,
+      "CLIP"
+    ],
+    [
+      8,
+      8,
+      0,
+      10,
+      0,
+      "LATENT"
+    ],
+    [
+      9,
+      1,
+      2,
+      10,
+      1,
+      "VAE"
+    ],
+    [
+      10,
+      10,
+      0,
+      11,
+      0,
+      "AUDIO"
+    ],
+    [
+      11,
+      13,
+      1,
+      12,
+      0,
+      "FLOAT"
+    ],
+    [
+      12,
+      14,
+      0,
+      5,
+      1,
+      "STRING"
+    ],
+    [
+      13,
+      12,
+      0,
+      8,
+      3,
+      "LATENT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7414845137869804,
+      "offset": [
+        699.274940818189,
+        -108.80812477972562
+      ]
+    },
+    "frontendVersion": "1.43.18",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

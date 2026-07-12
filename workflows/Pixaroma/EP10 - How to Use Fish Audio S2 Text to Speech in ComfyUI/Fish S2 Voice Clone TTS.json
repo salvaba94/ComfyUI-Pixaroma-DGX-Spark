@@ -1,0 +1,362 @@
+{
+  "id": "4e435351-0657-4c32-be1b-5d2d165f4633",
+  "revision": 0,
+  "last_node_id": 15,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "VHS_LoadAudioUpload",
+      "pos": [
+        -1937.8937753107684,
+        767.7998869894153
+      ],
+      "size": [
+        525.4295378240045,
+        204
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            2
+          ]
+        },
+        {
+          "name": "duration",
+          "type": "FLOAT",
+          "links": null
+        }
+      ],
+      "title": "1. Load Voice Sample 10-30s",
+      "properties": {
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "449839959f0153fb8a57211a9364c55163935ca9",
+        "Node name for S&R": "VHS_LoadAudioUpload"
+      },
+      "widgets_values": {
+        "audio": "WomanVoice6Sec.mp3",
+        "start_time": 0,
+        "duration": 0,
+        "audiopreview": {
+          "params": {
+            "start_time": 0,
+            "duration": 0,
+            "filename": "WomanVoice6Sec.mp3",
+            "type": "input"
+          }
+        }
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 7,
+      "type": "easy positive",
+      "pos": [
+        -1937.8937753107684,
+        1028.0363270823782
+      ],
+      "size": [
+        525.4295378240045,
+        117.57573908025506
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "title": "2. Reference Audio Text [Must Match Voice Sample Audio](OPTIONAL)",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "337a03bb19273ee084e56b16a59ad35cb07a1a04",
+        "Node name for S&R": "easy positive"
+      },
+      "widgets_values": [
+        "Hey, I'm AI generated. Be honest, do you like my voice and does it feel real?"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 12,
+      "type": "MarkdownNote",
+      "pos": [
+        -2520.973016684269,
+        767.7998869894153
+      ],
+      "size": [
+        549.2815529754967,
+        258.9619796551933
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "👑 Pixaroma - Note",
+      "properties": {},
+      "widgets_values": [
+        "## Models auto-download on first run\n## Check the instructions note (You need ~20GB VRAM)\n\n---\n\n## 🧩 Nodes Installed from Manager  \n\n- ComfyUI-Easy-Use\n- ComfyUI-VideoHelperSuite\n- Fish Audio S2 TTS\n\n---\n\n## 📚 Resources  \n🎥 **Tutorials:** [Pixaroma YouTube Channel](https://www.youtube.com/@pixaroma)  \n💬 **Community Discord:** [Join Here](https://discord.com/invite/gggpkVgBf3)\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 9,
+      "type": "MarkdownNote",
+      "pos": [
+        -1383.6769791930856,
+        1319.7998869894154
+      ],
+      "size": [
+        422.666748046875,
+        452.5963288426972
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Instructions",
+      "properties": {},
+      "widgets_values": [
+        "**Models auto-download on first run**  \nNo manual setup needed.\n\nSelect the model you want in **model_path**.\n\n## Default model: s2-pro-fp8\nRequires about **20 GB VRAM**\n\n| Model | VRAM | Size |\n|---|---:|---:|\n| s2-pro (bf16) | ~24 GB | ~10 GB |\n| s2-pro-fp8 | ~20 GB | ~8 GB |\n| s2-pro-BNB-int8 | ~20 GB | ~10 GB |\n| s2-pro-BNB-nf4 | ~16 GB | ~10 GB |\n\n## Manual download\n\nDownload **all files** for the selected model.\n\n| Model | Size | Download | Path |\n|---|---:|---|---|\n| s2-pro (bf16) | ~10 GB | [Open files](https://huggingface.co/fishaudio/s2-pro/tree/main) | `ComfyUI\\models\\fishaudioS2\\s2-pro` |\n| s2-pro-fp8 | ~8 GB | [Open files](https://huggingface.co/drbaph/s2-pro-fp8/tree/main) | `ComfyUI\\models\\fishaudioS2\\s2-pro-fp8` |\n\n## !!! RESEARCH & NON-COMMERCIAL USE LICENSE\n\n## [Read More HERE](https://huggingface.co/fishaudio/s2-pro/blob/main/LICENSE.md)\n"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 1,
+      "type": "FishS2VoiceCloneTTS",
+      "pos": [
+        -1383.6769791930856,
+        767.7998869894153
+      ],
+      "size": [
+        422.666748046875,
+        502
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "reference_audio",
+          "type": "AUDIO",
+          "link": 2
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 7
+        },
+        {
+          "name": "reference_text",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "reference_text"
+          },
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI-fish-audio-s2",
+        "ver": "9024ae77e2936d256bc33af9139d7de9ad9102eb",
+        "Node name for S&R": "FishS2VoiceCloneTTS"
+      },
+      "widgets_values": [
+        "s2-pro-fp8",
+        "Hello! [excited] This is my cloned voice.",
+        "auto",
+        "auto",
+        "auto",
+        "auto",
+        0,
+        200,
+        0.8,
+        0.8,
+        1.1,
+        1421655274,
+        "randomize",
+        true,
+        false,
+        false,
+        ""
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 6,
+      "type": "SaveAudioMP3",
+      "pos": [
+        -938.2229728525322,
+        767.3692119775035
+      ],
+      "size": [
+        414.13337402343745,
+        136
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 4
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.18.1",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/voice",
+        "V0"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "easy positive",
+      "pos": [
+        -1937.8937753107684,
+        1201.848506255596
+      ],
+      "size": [
+        525.4295378240045,
+        204.29921794292454
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "title": "3. Speech Text",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "337a03bb19273ee084e56b16a59ad35cb07a1a04",
+        "Node name for S&R": "easy positive"
+      },
+      "widgets_values": [
+        "[happy] Hey, this is Pixaroma, and [laughing] okay, this is already making me way too happy. [giggle] There is just something so fun and exciting about all of this. [Inhale] So come on, let us enjoy every second together. [crowd laughing] [background laughter]"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 15,
+      "type": "MarkdownNote",
+      "pos": [
+        -1937.8937753107684,
+        1462.3841642914833
+      ],
+      "size": [
+        525.4295378240045,
+        307.735724816597
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "tags",
+      "properties": {},
+      "widgets_values": [
+        "## Fine-Grained Inline Control\n\nS2 Pro lets you control speech by adding natural-language instructions directly in the text with **[tag]** syntax.\n\nUnlike a fixed tag system, it supports free-form prompts such as  \n[whisper in small voice] [professional broadcast tone] [pitch up]\n\nThis allows more precise control over tone, emotion, pacing, and delivery.\n\n## Common tags\n**15,000+ unique tags supported**\n\n[pause] [emphasis] [laughing] [inhale] [chuckle] [tsk] [singing] [excited] [laughing tone] [interrupting] [chuckling] [excited tone] [volume up] [echo] [angry] [low volume] [sigh] [low voice] [whisper] [screaming] [shouting] [loud] [surprised] [short pause] [exhale] [delight] [panting] [audience laughter] [with strong accent] [volume down] [clearing throat] [sad] [moaning] [shocked]\n\n## More info\n[Read more on Hugging Face](https://huggingface.co/fishaudio/s2-pro)"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    }
+  ],
+  "links": [
+    [
+      2,
+      3,
+      0,
+      1,
+      0,
+      "AUDIO"
+    ],
+    [
+      4,
+      1,
+      0,
+      6,
+      0,
+      "AUDIO"
+    ],
+    [
+      7,
+      5,
+      0,
+      1,
+      1,
+      "STRING"
+    ],
+    [
+      8,
+      7,
+      0,
+      1,
+      2,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9090909090909094,
+      "offset": [
+        2714.0383804270505,
+        -581.6894704847823
+      ]
+    },
+    "frontendVersion": "1.41.21",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

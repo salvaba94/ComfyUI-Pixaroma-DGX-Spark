@@ -1,0 +1,39 @@
+services:
+  comfyui:
+    image: comfyui-easy-install:cuda
+    container_name: comfyui
+    restart: unless-stopped
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+      args:
+        BASE_IMAGE: nvcr.io/nvidia/pytorch:25.06-py3
+        TORCH_INSTALL_MODE: preinstalled
+        ONNXRUNTIME_MODE: source
+        LLAMA_CPP_MODE: auto
+        INSTALL_ADDONS: ${INSTALL_ADDONS:-all-cuda}
+        ADDON_BUILD_JOBS: ${ADDON_BUILD_JOBS:-1}
+    ports:
+      - "8188:8188"
+    gpus: all
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      HF_HOME: /app/ComfyUI/models/.cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /app/ComfyUI/models/.cache/huggingface/hub
+      TRANSFORMERS_CACHE: /app/ComfyUI/models/.cache/huggingface/transformers
+      TORCH_HOME: /app/ComfyUI/models/.cache/torch
+      AUX_ANNOTATOR_CKPTS_PATH: /app/ComfyUI/models/controlnet_aux/ckpts
+    volumes:
+      - ./models:/app/ComfyUI/models
+      - ./input:/app/ComfyUI/input
+      - ./output:/app/ComfyUI/output
+      - ./user:/app/ComfyUI/user
+      - ./workflows:/app/ComfyUI/user/default/workflows

@@ -1,0 +1,111 @@
+Example of custom formula to generate a prompt without an image:
+
+Create ONE single, highly detailed image-generation prompt based on the description below.
+
+Description:
+[WRITE WHAT YOU WANT HERE]
+
+Rules:
+- Output must be a single paragraph
+- Do NOT use bullet points or lists
+- Do NOT explain anything
+- Do NOT add titles or labels
+- Focus on visual details only
+
+The prompt must include:
+- Subject and appearance
+- Clothing, materials, textures, and colors
+- Environment and background
+- Lighting style and mood
+- Camera angle and shot type
+- Art style or realism level
+- High-quality Stable Diffusion style descriptors
+
+Output ONLY the final prompt text.
+
+
+----------------
+
+Example of custom formula to generate a prompt With an image reference:
+
+Analyze the provided image and generate ONE single, highly detailed image-generation prompt that accurately recreates it.
+
+Rules:
+- Output must be a single paragraph
+- Do NOT use bullet points
+- Do NOT explain anything
+- Do NOT mention that this is an analysis
+- Do NOT reference the image itself
+
+The prompt must clearly describe:
+- The main subject and character design
+- Facial features, expression, and proportions
+- Clothing, accessories, materials, and textures
+- Art style and rendering style
+- Color palette and surface finish
+- Lighting style and softness
+- Camera angle, framing, and composition
+- Background and environment
+- Overall mood and aesthetic
+- High-quality Stable Diffusion style keywords
+
+Output ONLY the final prompt text.
+
+
+----------------
+
+
+Example of custom formula to generate a prompt With an image reference AND change the style:
+
+Analyze the provided image and generate ONE single image-generation prompt that recreates the subject in a clean vector cartoon style.
+
+Rules:
+- Output must be a single paragraph
+- Do NOT use bullet points
+- Do NOT explain anything
+- Do NOT mention the original image
+- Do NOT mention analysis
+
+The prompt must describe:
+- The same subject, pose, and character identity
+- Simplified cartoon proportions
+- Clean vector-style shapes with smooth curves
+- Flat colors with minimal gradients
+- Bold, consistent outlines
+- Simplified facial features with clear expressions
+- Minimal or abstract background
+- Even, shadow-free lighting
+- A polished 2D vector illustration look suitable for logos or stickers
+
+Use vector illustration, flat design, cartoon icon, SVG-style, clean lineart, and high-clarity descriptors.
+
+Output ONLY the final prompt text.
+
+----------------
+
+Example of custom formula to generate a prompt With an image reference AND change the Character:
+
+Analyze the provided image and generate ONE single image-generation prompt that recreates the same scene, pose, and composition, but replaces the original character with a panda.
+
+Rules:
+- Output must be a single paragraph
+- Do NOT use bullet points
+- Do NOT explain anything
+- Do NOT mention analysis
+- Do NOT mention the original character or image
+
+The prompt must describe:
+- A panda character as the main subject
+- The same pose, proportions, and body orientation as the original
+- Panda-appropriate facial features and expression
+- Clothing and accessories adapted naturally to fit a panda
+- The same overall art style and quality level
+- Similar lighting, framing, and composition
+- The same background or environment style
+- A cohesive and believable character redesign
+
+Output ONLY the final detailed long prompt text.
+
+----------------
+
+

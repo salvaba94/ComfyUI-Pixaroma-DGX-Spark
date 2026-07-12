@@ -1,0 +1,302 @@
+{
+  "id": "6d2c1c3c-70e3-4d13-9413-b1b027c691b3",
+  "revision": 0,
+  "last_node_id": 13,
+  "last_link_id": 5,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CLIPLoader",
+      "pos": [
+        -343.52097192013366,
+        168.56415608910342
+      ],
+      "size": [
+        379.7014566816851,
+        106.00000000000003
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "gemma4_e4b_it_fp8_scaled.safetensors",
+        "stable_diffusion",
+        "default"
+      ],
+      "color": "#0c362e",
+      "bgcolor": "#186253"
+    },
+    {
+      "id": 9,
+      "type": "PixaromaNote",
+      "pos": [
+        -921.2408386544012,
+        168.56415608910356
+      ],
+      "size": [
+        543.5026919319845,
+        412
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "1227d9898f9d5137533df750611ca97e8c738f3d",
+        "Node name for S&R": "PixaromaNote"
+      },
+      "widgets_values": [
+        "{\"version\":1,\"content\":\"<h2>MODELS AND NODES USED IN THIS WORKFLOW</h2><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #777777\\\"><p>\\n\\n</p><h3></h3><p>\\n\\n</p><h3><span data-ic=\\\"CLIP\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Load CLIP</h3><p>\\n\\n<span class=\\\"pix-note-btnblock\\\"><a class=\\\"pix-note-dl\\\" style=\\\"background-color: #f66744\\\" href=\\\"https://huggingface.co/Comfy-Org/gemma-4/resolve/main/text_encoders/gemma4_e4b_it_fp8_scaled.safetensors\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Download gemma4_e4b_it_fp8_scaled.safetensors<span class=\\\"pix-note-btnsize\\\">8.06 GB</span></a></span>&nbsp;\\n\\n</p><div class=\\\"pix-note-folderhint\\\" style=\\\"color: #888888\\\">Place in: ComfyUI/models/text_encoders</div><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #777777\\\"><p>\\n\\n</p><h3></h3><p>\\n\\n</p><h3></h3><p>\\n\\n</p><p><span data-ic=\\\"warning-v1\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;After placing the files, <span style=\\\"color: #f66744\\\">restart</span> ComfyUI or refresh model lists using <span style=\\\"color: #f66744\\\">R</span> shortcut.</p><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #777777\\\"><p>\\n\\n</p><h3><span data-ic=\\\"nodes-installed\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Custom Nodes</h3><p>\\n\\n</p><ul>\\n  <li>Pixaroma</li>\\n</ul><p>\\n\\n</p><hr class=\\\"pix-note-hr-solid\\\" style=\\\"color: #777777\\\"><p>\\n\\n</p><h3><span data-ic=\\\"pixaroma\\\" class=\\\"pix-note-ic\\\" contenteditable=\\\"false\\\" style=\\\"color: #f66744\\\"></span>&nbsp;Resources</h3><p>\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-discord\\\" href=\\\"https://discord.com/invite/gggpkVgBf3\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Join Discord</a>\\n</span>&nbsp;\\n\\n<span class=\\\"pix-note-btnblock\\\">\\n  <a class=\\\"pix-note-yt\\\" href=\\\"https://www.youtube.com/@pixaroma\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">Pixaroma YouTube Channel</a>\\n</span>&nbsp;</p>\",\"buttonColor\":\"#f66744\",\"lineColor\":\"#f66744\",\"width\":528.8383221706308,\"height\":591.2463174881113,\"backgroundColor\":\"#2a2a2a\"}",
+        ""
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 3,
+      "type": "TextGenerate",
+      "pos": [
+        72.23848189881772,
+        168.5641560891035
+      ],
+      "size": [
+        394.3532348632813,
+        412
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "showAdvanced": true,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 1
+        },
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "video",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "generated_text",
+          "type": "STRING",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.0",
+        "Node name for S&R": "TextGenerate"
+      },
+      "widgets_values": [
+        "",
+        256,
+        "on",
+        0.7,
+        64,
+        0.95,
+        0.05,
+        1.05,
+        0,
+        0,
+        false,
+        true
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 12,
+      "type": "StringConcatenate",
+      "pos": [
+        -343.52097192013366,
+        332.02949994654534
+      ],
+      "size": [
+        379.7014566816851,
+        343.8150203569903
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "title": "Formula + Short Prompt",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "Take the user's short prompt and rewrite it as one polished positive prompt optimized for the CircleStone Labs Anima model.\n\nOutput only the final positive prompt. Do not explain. Do not use bullet points. Do not include a negative prompt.\n\nThe final output must be one comma-separated positive prompt.\n\nAlways start the prompt exactly with:\nmasterpiece, best quality, score_7, safe,\n\nAfter that, follow this order:\nsubject count tag, main subject, character details, clothing, pose or action, expression, environment, background details, lighting, composition, camera angle or framing, color palette, anime or illustration style, rendering details.\n\nChoose the correct subject count tag:\n1girl for one female anime-style character\n1boy for one male anime-style character\n1other for one non-human, creature, robot, monster, object character, or unclear character\nsolo when there is one main subject\n2girls, 2boys, 1girl and 1boy, or multiple characters only when clearly requested by the user\n\nPreserve the user's original subject, setting, and intent exactly. Do not add extra characters, animals, weapons, text, logos, random objects, famous characters, copyrighted characters, artist names, or unrelated story details unless the user explicitly asks for them.\n\nUse Anima-friendly tags and short natural-language phrases. Keep tags mostly lowercase. Use spaces instead of underscores, except for score_7. Do not use score_9, score_8_up, score_7_up, or other score tags unless the user specifically asks for them.\n\nUse anime and illustration wording when helpful:\nanime illustration, detailed character design, clean line art, expressive eyes, soft shading, painterly background, cinematic lighting, vibrant colors, polished digital art, coherent composition, high detail.\n\nAvoid photography and realism wording unless the user explicitly asks for realism:\nphotorealistic, real photo, DSLR, raw photo, camera lens, hyperreal skin texture, realistic photography.\n\nIf the user's prompt is very short, expand it with coherent visual details that fit the original idea. If the prompt already has details, preserve them and improve clarity. If the prompt contains multiple characters, describe each character separately using left character, right character, foreground character, or background character to reduce attribute mixing.\n\nReturn only the enhanced positive prompt.",
+        "portrait of a woman dressed like a geisha, closeup, cherry petals",
+        " "
+      ],
+      "color": "#1e3323",
+      "bgcolor": "#36543d"
+    },
+    {
+      "id": 5,
+      "type": "PixaromaShowText",
+      "pos": [
+        502.6497138993653,
+        168.56415608910356
+      ],
+      "size": [
+        384.54053366870727,
+        507.2803642144321
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "c82f95989e0347b5cc48ddf52a51f2d776a1f83b",
+        "Node name for S&R": "PixaromaShowText"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, score_7, safe, 1girl, solo, geisha woman, intricate kimono, elegant hairstyle, serene expression, close up, falling cherry petals, traditional japanese garden, soft diffused sunlight, shallow depth of field, medium close up, pastel pink and deep red color palette, anime illustration, detailed character design, clean line art, soft shading, painterly background, high detail"
+      ],
+      "color": "#1d1d1d",
+      "bgcolor": "#2a2a2a"
+    },
+    {
+      "id": 8,
+      "type": "PixaromaLabel",
+      "pos": [
+        -921.2408386544012,
+        61.41856455856357
+      ],
+      "size": [
+        522,
+        51
+      ],
+      "flags": {
+        "no_title": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI-Pixaroma",
+        "ver": "80b307e8d1882fd933959cb0ea94a26d143557b5",
+        "Node name for S&R": "PixaromaLabel",
+        "aux_id": "pixaroma/ComfyUI-Pixaroma"
+      },
+      "widgets_values": [
+        "{\"text\":\"Gemma 4 - Anima Prompt Enhancer\",\"fontSize\":31,\"fontFamily\":\"Arial\",\"fontColor\":\"#ffffff\",\"textAlign\":\"left\",\"backgroundColor\":\"#f66744\",\"padding\":10,\"borderRadius\":0,\"opacity\":1,\"fontWeight\":\"normal\",\"lineHeight\":1}"
+      ],
+      "color": "transparent",
+      "bgcolor": "transparent"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      3,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      5,
+      12,
+      0,
+      3,
+      4,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9090909090909091,
+      "offset": [
+        1015.5711542175866,
+        136.63199205164952
+      ]
+    },
+    "frontendVersion": "1.44.19",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
