@@ -5,7 +5,9 @@ archive="/tmp/Helper-CEI-NEXT-unix.zip"
 easy_root="/app/ComfyUI-Easy-Install"
 addons_arg="${INSTALL_ADDONS:-}"
 addon_build_jobs="${ADDON_BUILD_JOBS:-1}"
-numpy_version="${NUMPY_VERSION:-2.3.5}"
+numpy_version="${NUMPY_VERSION:-1.26.4}"
+scipy_version="${SCIPY_VERSION:-1.15.3}"
+insightface_accept_license="${INSIGHTFACE_ACCEPT_LICENSE:-1}"
 
 # Nunchaku and similar CUDA add-ons can exhaust RAM when CMake/Ninja fan out.
 # Keep the default conservative, but allow larger builders to opt in.
@@ -22,6 +24,25 @@ append_csv() {
     else
         printf '%s,%s' "${current}" "${item}"
     fi
+}
+
+addon_selected() {
+    needle="$1"
+    raw="$2"
+    old_ifs_selected="${IFS}"
+    IFS=","
+    for item in ${raw}; do
+        IFS="${old_ifs_selected}"
+        item="${item# }"
+        item="${item% }"
+        if [ "${item}" = "${needle}" ] || [ "${item}" = "${needle}.sh" ]; then
+            IFS="${old_ifs_selected}"
+            return 0
+        fi
+        IFS=","
+    done
+    IFS="${old_ifs_selected}"
+    return 1
 }
 
 expand_addons() {
@@ -86,6 +107,36 @@ if [ -d "${easy_root}/Add-Ons" ]; then
 else
     echo "No Add-Ons directory was found in ${archive}" >&2
 fi
+
+patch_docker_cuda_version_checks() {
+    script="$1"
+    if [ ! -f "${script}" ]; then
+        return
+    fi
+
+    # Docker builds normally do not have a GPU attached, but source builds still
+    # need the CUDA runtime that PyTorch was compiled against.
+    sed -i \
+        -e "s/torch.version.cuda if torch.cuda.is_available() else 'Not available'/torch.version.cuda or 'Not available'/g" \
+        -e 's/\[\[ "\$CUDA_VERSION" != "12\.8" \]\]/[[ "$CUDA_VERSION" != "12.8" \&\& "$CUDA_VERSION" != "12.9" ]]/g' \
+        -e 's/\[ "\$CUDA_VERSION" != "12\.8" \] && \[ "\$CUDA_VERSION" != "13\.0" \]/[ "$CUDA_VERSION" != "12.8" ] \&\& [ "$CUDA_VERSION" != "12.9" ] \&\& [ "$CUDA_VERSION" != "13.0" ]/g' \
+        -e 's/\$CUDA_VERSION" != "12\.8" && "\$CUDA_VERSION" != "13\.0"/$CUDA_VERSION" != "12.8" \&\& "$CUDA_VERSION" != "12.9" \&\& "$CUDA_VERSION" != "13.0"/g' \
+        -e 's/\$CUDA_VERSION" != "12\.4" && "\$CUDA_VERSION" != "12\.8" && "\$CUDA_VERSION" != "13\.0"/$CUDA_VERSION" != "12.4" \&\& "$CUDA_VERSION" != "12.8" \&\& "$CUDA_VERSION" != "12.9" \&\& "$CUDA_VERSION" != "13.0"/g' \
+        -e 's/Supported version: 12\.8/Supported versions: 12.8, 12.9/g' \
+        -e 's/Supported version: 12\.8, 13\.0/Supported versions: 12.8, 12.9, 13.0/g' \
+        -e 's/Supported versions: 12\.8, 13\.0/Supported versions: 12.8, 12.9, 13.0/g' \
+        -e 's/Supported versions: 12\.4, 12\.8, 13\.0/Supported versions: 12.4, 12.8, 12.9, 13.0/g' \
+        "${script}"
+}
+
+for cuda_check_script in \
+    "${easy_root}/Add-Ons/SageAttention-NEXT.sh" \
+    "${easy_root}/Add-Ons/Nunchaku120-NEXT.sh" \
+    "${easy_root}/Add-Ons/FlashAttention.sh" \
+    "${easy_root}/Add-Ons/Trellis2.sh"
+do
+    patch_docker_cuda_version_checks "${cuda_check_script}"
+done
 
 insightface_script="${easy_root}/Add-Ons/Insightface-NEXT.sh"
 if [ -f "${insightface_script}" ]; then
@@ -152,6 +203,7 @@ validate_nunchaku() {
 import importlib
 import importlib.metadata
 import sys
+import traceback
 
 label = sys.argv[1]
 checks = [
@@ -168,6 +220,7 @@ for name, check in checks:
             print(f"{label} {name}: {result}")
     except Exception as exc:
         errors.append(f"{name}: {exc}")
+        traceback.print_exc()
 
 if errors:
     print(f"{label} did not install cleanly.", file=sys.stderr)
@@ -207,6 +260,23 @@ without_pip_constraints() {
     env -u PIP_CONSTRAINT -u PIP_BUILD_CONSTRAINT "$@"
 }
 
+restore_numeric_abi_pins() {
+    without_pip_constraints python -m pip install --force-reinstall --no-deps \
+        "numpy==${numpy_version}" \
+        "scipy==${scipy_version}"
+}
+
+insightface_license_accepted() {
+    case "${insightface_accept_license}" in
+        1|yes|YES|true|TRUE|y|Y)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 prepend_existing_ld_paths() {
     new_paths=""
     for path in "$@"; do
@@ -224,6 +294,38 @@ prepend_existing_ld_paths() {
         LD_LIBRARY_PATH="${new_paths}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
     fi
     export LD_LIBRARY_PATH
+}
+
+python_site_ld_paths() {
+    python - <<'PY'
+import site
+import sysconfig
+
+seen = set()
+roots = []
+
+for candidate in site.getsitepackages():
+    roots.append(candidate)
+
+purelib = sysconfig.get_paths().get("purelib")
+if purelib:
+    roots.append(purelib)
+
+for root in roots:
+    for suffix in (
+        "torch/lib",
+        "nvidia/cudnn/lib",
+        "nvidia/cublas/lib",
+        "nvidia/cusparselt/lib",
+        "nvidia/nccl/lib",
+        "nvidia/nvshmem/lib",
+        "nvidia/cuda_runtime/lib",
+    ):
+        path = f"{root}/{suffix}"
+        if path not in seen:
+            seen.add(path)
+            print(path)
+PY
 }
 
 cuda_build_env() {
@@ -254,13 +356,23 @@ cuda_build_env() {
             ;;
     esac
     prepend_existing_ld_paths \
+        $(python_site_ld_paths) \
         /opt/venv/lib/python3.12/site-packages/torch/lib \
+        /usr/local/lib/python3.12/dist-packages/torch/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/cudnn/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/cudnn/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/cu13/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/cublas/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/cublas/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/cusparselt/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/cusparselt/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/nccl/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/nccl/lib \
         /opt/venv/lib/python3.12/site-packages/nvidia/nvshmem/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/nvshmem/lib \
+        /opt/venv/lib/python3.12/site-packages/nvidia/cuda_runtime/lib \
+        /usr/local/lib/python3.12/dist-packages/nvidia/cuda_runtime/lib \
         "${CUDA_HOME}/lib64" \
         "${CUDA_HOME}/targets/${target_arch}/lib" \
         "${CUDA_HOME}/targets/${compat_arch}/lib" \
@@ -338,8 +450,30 @@ build_nunchaku_from_source() {
     fi
     cd "${easy_root}"
     python -m pip install --force-reinstall --no-deps "$@"
+    without_pip_constraints python -m pip install --upgrade "setuptools<81"
+    without_pip_constraints python -m pip install --upgrade --no-deps "librosa>=0.10.2,<0.11"
+    without_pip_constraints python -m pip install --force-reinstall --no-deps "transformers==4.57.6"
+    without_pip_constraints python -m pip install --upgrade --no-deps "narwhals>=1.0"
+    restore_numeric_abi_pins
     validate_nunchaku "Nunchaku source build"
     rm -rf "${build_root}"
+}
+
+install_insightface_noninteractive() {
+    if ! insightface_license_accepted; then
+        echo "[Insightface] License acceptance is required for non-interactive Docker installation." >&2
+        echo "[Insightface] Read https://github.com/deepinsight/insightface#license, then rebuild with --build-arg INSIGHTFACE_ACCEPT_LICENSE=1 if you accept it." >&2
+        exit 1
+    fi
+
+    echo "[Insightface] License acceptance provided; installing Insightface dependencies."
+    without_pip_constraints python -m pip install --no-cache-dir --no-warn-script-location --timeout=1000 --retries 200 \
+        --no-deps \
+        insightface \
+        filterpywhl \
+        facexlib \
+        filterpy
+    restore_numeric_abi_pins
 }
 
 install_open3d_build_deps() {
@@ -388,7 +522,7 @@ install_open3d_runtime_deps() {
         scikit-learn \
         tqdm \
         werkzeug
-    without_pip_constraints python -m pip install --force-reinstall --no-deps "numpy==${numpy_version}"
+    restore_numeric_abi_pins
 }
 
 install_trellis2_build_deps() {
@@ -477,8 +611,8 @@ build_trellis2_native_from_source() {
     trellis2_build_env
     without_pip_constraints python -m pip install --upgrade build wheel "setuptools<82" ninja "cmake<4" pybind11
     without_pip_constraints python -m pip install --no-cache-dir --no-warn-script-location --timeout=1000 --retries 200 --no-deps \
-        meshlib requests pymeshlab opencv-python scipy plotly rembg plyfile
-    without_pip_constraints python -m pip install --force-reinstall --no-deps "numpy==${numpy_version}"
+        meshlib requests pymeshlab opencv-python "scipy==${scipy_version}" plotly rembg plyfile
+    restore_numeric_abi_pins
     build_open3d_from_source
     without_pip_constraints python -m pip install --no-cache-dir --no-build-isolation --no-deps \
         git+https://github.com/NVlabs/nvdiffrast.git
@@ -588,8 +722,13 @@ repair_addon_from_source_if_needed() {
     script_base="$(basename "${script}")"
 
     case "${script_base}" in
+        Insightface*.sh)
+            if ! python_imports_ok insightface facexlib; then
+                install_insightface_noninteractive
+            fi
+            ;;
         Nunchaku*.sh)
-            without_pip_constraints python -m pip install --force-reinstall --no-deps "numpy==${numpy_version}"
+            restore_numeric_abi_pins
             if ! python_imports_ok nunchaku._C || ! python_specs_ok nunchaku; then
                 build_nunchaku_from_source
             fi
@@ -627,18 +766,32 @@ validate_addon() {
 }
 
 if [ -z "${addons_arg}" ]; then
-    echo "Add-Ons extracted to ${easy_root}/Add-Ons; no add-ons selected for build-time installation."
+    echo "[AddOns] Add-Ons extracted to ${easy_root}/Add-Ons; no add-ons selected for build-time installation."
     exit 0
 fi
 
+if addon_selected "Insightface-NEXT" "${addons_arg}" && ! insightface_license_accepted; then
+    echo "[Insightface] Insightface-NEXT was selected in INSTALL_ADDONS, but INSIGHTFACE_ACCEPT_LICENSE is not enabled." >&2
+    echo "[Insightface] Read https://github.com/deepinsight/insightface#license, then rebuild with --build-arg INSIGHTFACE_ACCEPT_LICENSE=1 if you accept it." >&2
+    echo "[Insightface] To skip InsightFace, remove Insightface-NEXT from INSTALL_ADDONS." >&2
+    exit 1
+fi
+
 cd "${easy_root}"
-echo "Add-on native build parallelism: ${addon_build_jobs} job(s)"
+echo "[AddOns] Native build parallelism: ${addon_build_jobs} job(s)"
 old_ifs="${IFS}"
 IFS=","
 for addon in ${addons_arg}; do
     IFS="${old_ifs}"
     addon="${addon# }"
     addon="${addon% }"
+    case "${addon}" in
+        ComfyUI-3D-Pack|3D-Pack|Comfy3D)
+            echo "[Comfy3D] Docker add-on handled during custom node installation: ${addon}"
+            IFS=","
+            continue
+            ;;
+    esac
     case "${addon}" in
         *.sh)
             script="Add-Ons/${addon}"
@@ -649,7 +802,7 @@ for addon in ${addons_arg}; do
     esac
 
     if [ ! -f "${script}" ]; then
-        echo "Requested add-on script not found: ${script}" >&2
+        echo "[AddOns] Requested add-on script not found: ${script}" >&2
         exit 1
     fi
 
@@ -663,19 +816,21 @@ for addon in ${addons_arg}; do
     case "${script_name}" in
         FlashAttention*.sh)
             flashattention_cuda_archs
-            echo "FlashAttention CUDA archs: ${FLASH_ATTN_CUDA_ARCHS}"
+            echo "[FlashAttention] CUDA archs: ${FLASH_ATTN_CUDA_ARCHS}"
             ;;
     esac
 
     if addon_already_satisfied "${addon}" "${script}"; then
-        echo "Docker add-on already installed: ${script}"
+        echo "[AddOns] Docker add-on already installed: ${script}"
         validate_addon "${addon}" "${script}"
         IFS=","
         continue
     fi
 
-    echo "Installing Docker add-on: ${script}"
-    (cd "${script_dir}" && DOCKER_ADDON_ALLOW_MISSING_TORCH=1 bash "${script_name}" NoPause)
+    echo "[AddOns] Installing Docker add-on: ${script}"
+    if ! (cd "${script_dir}" && DOCKER_ADDON_ALLOW_MISSING_TORCH=1 bash "${script_name}" NoPause); then
+        echo "[AddOns] Upstream add-on script failed; checking whether Docker source repair can satisfy ${addon}."
+    fi
     repair_addon_from_source_if_needed "${addon}" "${script}"
     validate_addon "${addon}" "${script}"
     IFS=","

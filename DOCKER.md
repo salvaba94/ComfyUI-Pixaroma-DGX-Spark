@@ -112,6 +112,10 @@ docker compose build \
   --build-arg ADDON_BUILD_JOBS=2
 ```
 
+ARM64 ONNX Runtime is also compiled from source with CUDA enabled. It honors
+the same `ADDON_BUILD_JOBS` value by default, or `ONNXRUNTIME_BUILD_JOBS` if
+you want to tune that build separately.
+
 Trellis2 is especially sensitive on ARM64. The packaged Trellis2 Linux wheels
 inside the helper archive are currently `linux_x86_64` wheels, so an ARM64 build
 must successfully build/install Trellis2 native modules such as `cumesh`,
@@ -170,6 +174,7 @@ The Dockerfile supports these build arguments:
 - `UV_VERSION`
 - `ONNXRUNTIME_MODE`: `auto`, `wheel`, `source`, or `cpu`
 - `ONNXRUNTIME_REF`
+- `ONNXRUNTIME_BUILD_JOBS`: native build jobs for ONNX Runtime source builds; defaults to `ADDON_BUILD_JOBS`
 - `LLAMA_CPP_MODE`: `auto`, `wheel`, `source`, or `cpu`
 - `LLAMA_CPP_REPO`
 - `INSTALL_ADDONS`: comma-separated add-on script names to run at build time

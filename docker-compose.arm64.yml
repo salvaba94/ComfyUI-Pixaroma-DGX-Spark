@@ -12,10 +12,13 @@ services:
       args:
         BASE_IMAGE: nvcr.io/nvidia/pytorch:25.06-py3
         TORCH_INSTALL_MODE: preinstalled
+        TORCHAUDIO_BUILD_JOBS: ${TORCHAUDIO_BUILD_JOBS:-${ADDON_BUILD_JOBS:-1}}
         ONNXRUNTIME_MODE: source
+        ONNXRUNTIME_BUILD_JOBS: ${ONNXRUNTIME_BUILD_JOBS:-${ADDON_BUILD_JOBS:-1}}
         LLAMA_CPP_MODE: auto
         INSTALL_ADDONS: ${INSTALL_ADDONS:-all-cuda}
         ADDON_BUILD_JOBS: ${ADDON_BUILD_JOBS:-1}
+        INSIGHTFACE_ACCEPT_LICENSE: ${INSIGHTFACE_ACCEPT_LICENSE:-1}
     ports:
       - "8188:8188"
     gpus: all

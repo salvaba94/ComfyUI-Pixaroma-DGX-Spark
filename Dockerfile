@@ -6,19 +6,25 @@ ARG COMFYUI_REF=master
 ARG TORCH_VERSION=2.8.0
 ARG TORCHVISION_VERSION=0.23.0
 ARG TORCHAUDIO_VERSION=2.8.0
+ARG TORCHAUDIO_BUILD_JOBS=""
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cu128
 ARG TORCH_INSTALL_MODE=auto
 ARG UV_VERSION=0.9.7
 ARG ONNXRUNTIME_MODE=auto
 ARG ONNXRUNTIME_REF=v1.27.0
+ARG ONNXRUNTIME_BUILD_JOBS=""
 ARG LLAMA_CPP_MODE=auto
 ARG LLAMA_CPP_REPO=https://github.com/JamePeng/llama-cpp-python.git
 ARG INSTALL_ADDONS=""
 ARG ADDON_BUILD_JOBS=1
+ARG INSIGHTFACE_ACCEPT_LICENSE=1
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
     PYTHONUNBUFFERED=1 \
+    UV_HTTP_TIMEOUT=300 \
+    UV_CONCURRENT_DOWNLOADS=4 \
+    UV_INSTALL_RETRIES=3 \
     VIRTUAL_ENV=/opt/venv \
     PATH=/opt/venv/bin:$PATH \
     LD_LIBRARY_PATH=/opt/venv/lib/python3.12/site-packages/torch/lib:/opt/venv/lib/python3.12/site-packages/nvidia/cudnn/lib:/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib:/opt/venv/lib/python3.12/site-packages/nvidia/cublas/lib:/opt/venv/lib/python3.12/site-packages/nvidia/cusparselt/lib:/opt/venv/lib/python3.12/site-packages/nvidia/nccl/lib:/opt/venv/lib/python3.12/site-packages/nvidia/nvshmem/lib:/usr/local/cuda/lib64:/usr/local/cuda/targets/sbsa-linux/lib:/usr/local/cuda/targets/aarch64-linux/lib:/usr/local/cuda/targets/x86_64-linux/lib:/usr/local/cuda-13.0/lib64:/usr/local/cuda-13.0/targets/sbsa-linux/lib:/usr/local/cuda-13.0/targets/aarch64-linux/lib:/usr/local/cuda-13.0/targets/x86_64-linux/lib:/usr/local/cuda-12.9/lib64:/usr/local/cuda-12.9/targets/sbsa-linux/lib:/usr/local/cuda-12.9/targets/aarch64-linux/lib:/usr/local/cuda-12.8/lib64:/usr/local/cuda-12.8/targets/sbsa-linux/lib:/usr/local/cuda-12.8/targets/aarch64-linux/lib:/usr/local/cuda-12.8/targets/x86_64-linux/lib:/usr/lib/aarch64-linux-gnu:/usr/lib/x86_64-linux-gnu \
@@ -44,6 +50,12 @@ RUN apt-get update \
         libglib2.0-0 \
         libgomp1 \
         libsndfile1 \
+        libx11-dev \
+        libxrandr-dev \
+        libxinerama-dev \
+        libxcursor-dev \
+        libxi-dev \
+        libgl1-mesa-dev \
         libsm6 \
         libxext6 \
         ninja-build \
@@ -55,6 +67,11 @@ RUN apt-get update \
         unzip \
         sox \
     && rm -rf /var/lib/apt/lists/*
+
+ARG NUMPY_VERSION=1.26.4
+ARG SCIPY_VERSION=1.15.3
+ENV NUMPY_VERSION=${NUMPY_VERSION} \
+    SCIPY_VERSION=${SCIPY_VERSION}
 
 RUN python3 -m venv --system-site-packages /opt/venv \
     && python -m pip install --upgrade pip \
@@ -79,7 +96,7 @@ RUN uv pip install scikit-build-core onnx flet chardet==5.2.0 \
     && uv pip install \
         stringzilla==3.12.6 \
         transformers==4.57.6 \
-        scipy==1.17.1 \
+        scipy==${SCIPY_VERSION} \
         pygit2 \
         av==16.0.1 \
     && if [ "${TORCH_INSTALL_MODE}" = "preinstalled" ]; then \
@@ -91,28 +108,46 @@ RUN uv pip install scikit-build-core onnx flet chardet==5.2.0 \
     else \
         uv pip install -r requirements.txt; \
     fi \
-    && uv pip install pylatexenc python-ffmpeg pydantic
+    && uv pip install pylatexenc python-ffmpeg pydantic \
+    && uv pip install --force-reinstall --no-deps "numpy==${NUMPY_VERSION}" "scipy==${SCIPY_VERSION}"
 
 COPY docker/install_onnxruntime.sh /usr/local/bin/install_onnxruntime.sh
 COPY docker/install_llama_cpp.sh /usr/local/bin/install_llama_cpp.sh
+RUN chmod +x /usr/local/bin/install_onnxruntime.sh /usr/local/bin/install_llama_cpp.sh \
+    && ONNXRUNTIME_MODE="${ONNXRUNTIME_MODE}" ONNXRUNTIME_REF="${ONNXRUNTIME_REF}" ONNXRUNTIME_BUILD_JOBS="${ONNXRUNTIME_BUILD_JOBS:-${ADDON_BUILD_JOBS}}" /usr/local/bin/install_onnxruntime.sh \
+    && LLAMA_CPP_MODE="${LLAMA_CPP_MODE}" LLAMA_CPP_REPO="${LLAMA_CPP_REPO}" /usr/local/bin/install_llama_cpp.sh
+
 COPY docker/install_custom_nodes.sh /usr/local/bin/install_custom_nodes.sh
-COPY docker/install_addons.sh /usr/local/bin/install_addons.sh
 COPY docker/disable_broken_flash_attn.py /usr/local/bin/disable_broken_flash_attn.py
 COPY docker/install_matching_cuda_toolkit.sh /usr/local/bin/install_matching_cuda_toolkit.sh
 COPY docker/install_matching_triton.py /usr/local/bin/install_matching_triton.py
 COPY docker/check_cuda_stack.py /usr/local/bin/check_cuda_stack.py
 COPY docker/check_cuda_install.sh /usr/local/bin/check_cuda_install.sh
 COPY Helper-CEI-NEXT-unix.zip /tmp/Helper-CEI-NEXT-unix.zip
-RUN chmod +x /usr/local/bin/install_onnxruntime.sh /usr/local/bin/install_llama_cpp.sh /usr/local/bin/install_custom_nodes.sh /usr/local/bin/install_addons.sh \
+RUN chmod +x /usr/local/bin/install_custom_nodes.sh \
     /usr/local/bin/install_matching_cuda_toolkit.sh \
     /usr/local/bin/check_cuda_install.sh \
-    && ONNXRUNTIME_MODE="${ONNXRUNTIME_MODE}" ONNXRUNTIME_REF="${ONNXRUNTIME_REF}" /usr/local/bin/install_onnxruntime.sh \
-    && LLAMA_CPP_MODE="${LLAMA_CPP_MODE}" LLAMA_CPP_REPO="${LLAMA_CPP_REPO}" /usr/local/bin/install_llama_cpp.sh \
     && /usr/local/bin/install_custom_nodes.sh \
     && python /usr/local/bin/disable_broken_flash_attn.py \
     && python /usr/local/bin/install_matching_triton.py \
-    && /usr/local/bin/install_matching_cuda_toolkit.sh \
-    && INSTALL_ADDONS="${INSTALL_ADDONS}" ADDON_BUILD_JOBS="${ADDON_BUILD_JOBS}" /usr/local/bin/install_addons.sh
+    && /usr/local/bin/install_matching_cuda_toolkit.sh
+
+COPY docker/install_addons.sh /usr/local/bin/install_addons.sh
+RUN chmod +x /usr/local/bin/install_addons.sh \
+    && INSTALL_ADDONS="${INSTALL_ADDONS}" \
+    ADDON_BUILD_JOBS="${ADDON_BUILD_JOBS}" \
+    INSIGHTFACE_ACCEPT_LICENSE="${INSIGHTFACE_ACCEPT_LICENSE}" \
+    /usr/local/bin/install_addons.sh
+
+COPY docker/finalize_cuda_python_stack.sh /usr/local/bin/finalize_cuda_python_stack.sh
+RUN chmod +x /usr/local/bin/finalize_cuda_python_stack.sh \
+    && TORCHAUDIO_VERSION="${TORCHAUDIO_VERSION}" \
+    TORCHAUDIO_BUILD_JOBS="${TORCHAUDIO_BUILD_JOBS:-${ADDON_BUILD_JOBS}}" \
+    ONNXRUNTIME_MODE="${ONNXRUNTIME_MODE}" \
+    ONNXRUNTIME_REF="${ONNXRUNTIME_REF}" \
+    ONNXRUNTIME_BUILD_JOBS="${ONNXRUNTIME_BUILD_JOBS:-${ADDON_BUILD_JOBS}}" \
+    ADDON_BUILD_JOBS="${ADDON_BUILD_JOBS}" \
+    /usr/local/bin/finalize_cuda_python_stack.sh
 
 EXPOSE 8188
 

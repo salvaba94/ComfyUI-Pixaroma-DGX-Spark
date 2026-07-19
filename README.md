@@ -53,6 +53,7 @@ Dedicated to the **Pixaroma** team
 | [FlashAttention](https://github.com/Dao-AILab/flash-attention) | Backup ComfyUI |
 | [InsightFace](https://github.com/deepinsight/insightface) | Torch-Pack |
 | [Trellis 2.0](https://github.com/visualbruno/ComfyUI-Trellis2) | |
+| [ComfyUI-3D-Pack](https://github.com/MrForExample/ComfyUI-3D-Pack) | Opt-in add-on; add `ComfyUI-3D-Pack` to `INSTALL_ADDONS` |
 
 </details>
 
@@ -165,13 +166,26 @@ dependencies because ARM64 CUDA wheels do not exist for every library.
 The heaviest source-build cases are usually add-ons such as **Trellis2**,
 **Nunchaku**, **FlashAttention**, and related CUDA/native extensions. This is
 expected on ARM64 and can take a long time.
+The ONNX Runtime CUDA source build also honors `ADDON_BUILD_JOBS`; set
+`ONNXRUNTIME_BUILD_JOBS` only if you want a different limit for ONNX Runtime.
 
-Build the ARM64 CUDA image with the CUDA add-ons and start ComfyUI:
+Build the ARM64 CUDA image with the CUDA add-ons and start ComfyUI.
+When `Insightface-NEXT` is present in `INSTALL_ADDONS`, the Docker build runs
+the non-interactive InsightFace installer. Read the
+[InsightFace license](https://github.com/deepinsight/insightface#license)
+before including it.
 
 ```bash
-docker compose -f docker-compose.arm64.yml build \
-  --progress=plain \
-  --build-arg INSTALL_ADDONS=SageAttention-NEXT,Nunchaku120-NEXT,Insightface-NEXT,Trellis2,FlashAttention \
+docker compose --progress=plain -f docker-compose.arm64.yml build \
+  --build-arg INSTALL_ADDONS=SageAttention-NEXT,Nunchaku120-NEXT,Insightface-NEXT,Trellis2,FlashAttention,ComfyUI-3D-Pack \
+  --build-arg ADDON_BUILD_JOBS=1 && docker compose -f docker-compose.arm64.yml up -d
+```
+
+To build the same ARM64 CUDA stack without InsightFace:
+
+```bash
+docker compose --progress=plain -f docker-compose.arm64.yml build \
+  --build-arg INSTALL_ADDONS=SageAttention-NEXT,Nunchaku120-NEXT,Trellis2,FlashAttention,ComfyUI-3D-Pack \
   --build-arg ADDON_BUILD_JOBS=1 && docker compose -f docker-compose.arm64.yml up -d
 ```
 
@@ -179,6 +193,12 @@ For regular x86_64 NVIDIA CUDA hosts, use the normal Docker Compose file:
 
 ```bash
 docker compose -f docker-compose.yml up --build
+```
+
+To include the optional 3D pack in another Docker image build, add it to `INSTALL_ADDONS`:
+
+```bash
+--build-arg INSTALL_ADDONS=ComfyUI-3D-Pack
 ```
 
 For CPU-only Docker builds, use:
