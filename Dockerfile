@@ -18,6 +18,7 @@ ARG LLAMA_CPP_REPO=https://github.com/JamePeng/llama-cpp-python.git
 ARG INSTALL_ADDONS=""
 ARG ADDON_BUILD_JOBS=1
 ARG INSIGHTFACE_ACCEPT_LICENSE=1
+ARG TRELLIS2_DOWNLOAD_DINOV3=0
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
@@ -137,6 +138,7 @@ RUN chmod +x /usr/local/bin/install_addons.sh \
     && INSTALL_ADDONS="${INSTALL_ADDONS}" \
     ADDON_BUILD_JOBS="${ADDON_BUILD_JOBS}" \
     INSIGHTFACE_ACCEPT_LICENSE="${INSIGHTFACE_ACCEPT_LICENSE}" \
+    TRELLIS2_DOWNLOAD_DINOV3="${TRELLIS2_DOWNLOAD_DINOV3}" \
     /usr/local/bin/install_addons.sh
 
 COPY docker/finalize_cuda_python_stack.sh /usr/local/bin/finalize_cuda_python_stack.sh

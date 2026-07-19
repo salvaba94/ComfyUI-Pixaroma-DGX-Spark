@@ -179,6 +179,8 @@ The Dockerfile supports these build arguments:
 - `LLAMA_CPP_REPO`
 - `INSTALL_ADDONS`: comma-separated add-on script names to run at build time
 - `ADDON_BUILD_JOBS`: native build jobs for add-ons; defaults to `1` for low-memory Nunchaku builds
+- `TRELLIS2_DOWNLOAD_DINOV3`: set to `1` to bake Trellis2's DINOv3 model into
+  the image; defaults to `0` so the model can be downloaded on demand or mounted
 
 The default CUDA 12.8 profile uses:
 

@@ -168,6 +168,8 @@ trellis2_script="${easy_root}/Add-Ons/Trellis2.sh"
 if [ -f "${trellis2_script}" ]; then
     sed -i \
         -e '/WHEEL_DIR=/a if [ "$(uname -m)" != "x86_64" ]; then WHEEL_DIR="/tmp/trellis2-no-compatible-wheels"; fi' \
+        -e '/^# Set model variables/i if [ "${TRELLIS2_DOWNLOAD_DINOV3:-0}" != "1" ]; then\n    echo "[Trellis2] Skipping DINOv3 model download during Docker build; mount or download it on demand under ../ComfyUI/models/facebook/dinov3-vitl16-pretrain-lvd1689m."\nelse' \
+        -e '/was downloaded successfully/a fi' \
         -e 's@"$PYTHON_PATH" -I -m pip install -r ../ComfyUI/custom_nodes/ComfyUI-Trellis2/requirements.txt --no-deps $PIPargs@grep -Eiv '"'"'open3d([<>=~![:space:]]|$)'"'"' ../ComfyUI/custom_nodes/ComfyUI-Trellis2/requirements.txt > /tmp/trellis2-requirements-no-open3d.txt\n"$PYTHON_PATH" -I -m pip install -r /tmp/trellis2-requirements-no-open3d.txt --no-deps $PIPargs@' \
         "${trellis2_script}"
 fi

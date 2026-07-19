@@ -168,6 +168,9 @@ The heaviest source-build cases are usually add-ons such as **Trellis2**,
 expected on ARM64 and can take a long time.
 The ONNX Runtime CUDA source build also honors `ADDON_BUILD_JOBS`; set
 `ONNXRUNTIME_BUILD_JOBS` only if you want a different limit for ONNX Runtime.
+Trellis2 does not download the DINOv3 model during Docker builds by default;
+set `TRELLIS2_DOWNLOAD_DINOV3=1` only if you want that model baked into the
+image instead of downloaded on demand or mounted under `models/`.
 
 Build the ARM64 CUDA image with the CUDA add-ons and start ComfyUI.
 When `Insightface-NEXT` is present in `INSTALL_ADDONS`, the Docker build runs
