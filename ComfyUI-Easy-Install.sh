@@ -36,6 +36,8 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1 >/dev/null 2>&1 || true
 PIP_ARGS="--no-cache-dir --no-warn-script-location --timeout=120 --retries 3 --progress-bar on --root-user-action=ignore --trusted-host pypi.org --trusted-host files.pythonhosted.org --trusted-host pypi.python.org"
 CURL_ARGS="--retry 200 --retry-all-errors"
 UV_ARGS="--system --no-cache --link-mode=copy"
+export UV_HTTP_TIMEOUT="${UV_HTTP_TIMEOUT:-300}"
+export UV_CONCURRENT_DOWNLOADS="${UV_CONCURRENT_DOWNLOADS:-4}"
 
 # Check for Existing ComfyUI Folder
 if [ -d "ComfyUI-Easy-Install" ]; then
@@ -481,6 +483,38 @@ EOL
     echo ""
 }
 
+filter_node_requirements() {
+    local requirements="$1"
+    local output="$2"
+
+    grep -Evi "^(torch|torchvision|torchaudio|triton|xformers)([<>=~![:space:]]|$)" "${requirements}" \
+        | grep -Evi "^(nvidia-|cuda-|cuda_|cuda-toolkit|cuda-bindings|cuda-pathfinder)([A-Za-z0-9_.-]*)([<>=~![:space:]]|$)" \
+        | grep -vi "triton-windows" \
+        | grep -vi "decord" \
+        | grep -vi "onnxruntime-gpu" \
+        | grep -vi "onnxruntime-openvino" \
+        | grep -vi "taichi" \
+        | grep -vi "llama-cpp-python" > "${output}" 2>/dev/null || true
+}
+
+filter_comfy3d_requirements() {
+    local requirements="$1"
+    local output="$2"
+    local arch="$(uname -m)"
+
+    filter_node_requirements "${requirements}" "${output}"
+    local filtered="${output}.filtered"
+    grep -Evi "^(cumm|spconv-cu[0-9]*)([<>=~![:space:]]|$)" "${output}" > "${filtered}" 2>/dev/null || true
+    mv "${filtered}" "${output}"
+
+    if [ "$(uname -s)" = "Darwin" ] || [ "${arch}" = "aarch64" ] || [ "${arch}" = "arm64" ]; then
+        local tmp_output="${output}.native"
+        grep -Evi "^(open3d|xformers|gpytoolbox)([<>=~![:space:]]|$)" "${output}" > "${tmp_output}" 2>/dev/null || true
+        mv "${tmp_output}" "${output}"
+        echo "/tmp/gpytoolbox-arm64" >> "${output}"
+    fi
+}
+
 # Get Node
 get_node() {
     GIT_URL=$1
@@ -502,9 +536,7 @@ get_node() {
         if [ -s "./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt" ]; then
             if [ "$(uname)" = "Darwin" ]; then
                 # macOS: filter out packages that have no macOS wheels
-                grep -vi "onnxruntime-gpu" "./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt" | \
-                grep -vi "decord" | \
-                grep -vi "triton" > "/tmp/requirements_temp.txt" 2>/dev/null || true
+                filter_node_requirements "./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt" "/tmp/requirements_temp.txt"
                 if [ -s "/tmp/requirements_temp.txt" ]; then
                     uv pip install -r "/tmp/requirements_temp.txt" $UV_ARGS
                 fi
@@ -514,8 +546,11 @@ get_node() {
                     uv pip install onnxruntime $UV_ARGS
                 fi
             else
-                # Linux: install as-is
-                uv pip install -r "./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt" $UV_ARGS
+                filter_node_requirements "./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt" "/tmp/requirements_temp.txt"
+                if [ -s "/tmp/requirements_temp.txt" ]; then
+                    uv pip install -r "/tmp/requirements_temp.txt" $UV_ARGS
+                fi
+                rm -f "/tmp/requirements_temp.txt"
             fi
         fi
     fi
@@ -526,6 +561,199 @@ get_node() {
         fi
     fi
     echo ""
+}
+
+log_comfy3d() {
+    echo -e "${GREEN}[Comfy3D]${RESET} $*"
+}
+
+prepare_gpytoolbox_arm64() {
+    local arch="$(uname -m)"
+    if [ "${arch}" != "aarch64" ] && [ "${arch}" != "arm64" ]; then
+        return
+    fi
+
+    log_comfy3d "Preparing ARM64 gpytoolbox source patch."
+    local gpy_target="/tmp/gpytoolbox-arm64"
+    rm -rf "${gpy_target}"
+    git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/sgsellan/gpytoolbox.git "${gpy_target}"
+
+    python - "${gpy_target}" <<'PATCHPY'
+from pathlib import Path
+import sys
+root = Path(sys.argv[1])
+cmake = root / "CMakeLists.txt"
+text = cmake.read_text()
+replacements = {
+    "# Include webgpu\ninclude(webgpu)\ninclude(glfw3webgpu)\nif(TARGET webgpu AND TARGET glfw3webgpu)\n\tadd_compile_definitions(GL_AVAILABLE)\n\tset(GL_LIBS webgpu glfw3webgpu)\nelse()\n\tset(GL_LIBS \"\")\nendif()\n": "set(GL_LIBS \"\")\n",
+    "\tsrc/cpp/reach_for_the_arcs/outside_points_from_rasterization.h\n": "",
+    "\tsrc/cpp/reach_for_the_arcs/outside_points_from_rasterization.cpp\n": "",
+    '\t"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs/binding_outside_points_from_rasterization.cpp"\n': "",
+    "# Manually copy wgpu to the right place\ntarget_copy_webgpu_binaries(gpytoolbox_bindings)\n": "",
+}
+for old, new in replacements.items():
+    text = text.replace(old, new)
+cmake.write_text(text)
+
+core = root / "src/cpp/gpytoolbox_bindings_core.cpp"
+text = core.read_text()
+text = text.replace("void binding_outside_points_from_rasterization(py::module& m);\n", "")
+text = text.replace("    binding_outside_points_from_rasterization(m);\n", "")
+core.write_text(text)
+PATCHPY
+}
+
+ensure_comfy3d_cuda_toolkit() {
+    if [ -x /usr/local/bin/install_matching_cuda_toolkit.sh ]; then
+        log_comfy3d "Ensuring CUDA toolkit matches the runtime."
+        /usr/local/bin/install_matching_cuda_toolkit.sh
+    fi
+}
+
+configure_comfy3d_arm64_build_env() {
+    local arch="$(uname -m)"
+    if [ "${arch}" != "aarch64" ] && [ "${arch}" != "arm64" ]; then
+        return
+    fi
+
+    export CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}"
+    export CUDA_PATH="${CUDA_PATH:-${CUDA_HOME}}"
+    export PATH="${CUDA_HOME}/bin:${PATH}"
+    export CPATH="${CUDA_HOME}/include${CPATH:+:${CPATH}}"
+    export C_INCLUDE_PATH="${CUDA_HOME}/include${C_INCLUDE_PATH:+:${C_INCLUDE_PATH}}"
+    export CPLUS_INCLUDE_PATH="${CUDA_HOME}/include${CPLUS_INCLUDE_PATH:+:${CPLUS_INCLUDE_PATH}}"
+    export LIBRARY_PATH="${CUDA_HOME}/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
+    export LD_LIBRARY_PATH="${CUDA_HOME}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    export TORCH_CUDA_ARCH_LIST="${COMFY3D_CUDA_ARCH_LIST:-${TORCH_CUDA_ARCH_LIST:-8.7;9.0}}"
+    export MAX_JOBS="${MAX_JOBS:-${ADDON_BUILD_JOBS:-1}}"
+    log_comfy3d "Configured ARM64 CUDA build env: CUDA_HOME=${CUDA_HOME}, TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST}, MAX_JOBS=${MAX_JOBS}."
+}
+
+patch_comfy3d_arm64_build_scripts() {
+    local pack_root="$1"
+    local arch="$(uname -m)"
+    if [ "${arch}" != "aarch64" ] && [ "${arch}" != "arm64" ]; then
+        return
+    fi
+
+    log_comfy3d "Patching upstream build scripts for ARM64 source compilation."
+    python - "${pack_root}" <<'PATCHPY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+auto_build = root / "_Pre_Builds" / "_Build_Scripts" / "auto_build_all.py"
+if auto_build.exists():
+    text = auto_build.read_text()
+    marker = "def build_python_wheel(dependency_dir, output_dir):\n"
+    helper = r'''
+def patch_arm64_dependency_sources(dependency_dir):
+    if platform.machine() not in ("aarch64", "arm64"):
+        return
+
+    setup_py = os.path.join(dependency_dir, "setup.py")
+    if not os.path.exists(setup_py):
+        return
+
+    with open(setup_py, "r", encoding="utf-8") as f:
+        text = f.read()
+
+    patched = text.replace(
+        'os.environ["TORCH_CUDA_ARCH_LIST"] = ".".join(map(str, torch.cuda.get_device_capability()))',
+        'os.environ.setdefault("TORCH_CUDA_ARCH_LIST", os.environ.get("COMFY3D_CUDA_ARCH_LIST", "8.7"))',
+    )
+
+    if patched != text:
+        with open(setup_py, "w", encoding="utf-8") as f:
+            f.write(patched)
+        print(f"Patched ARM64 CUDA build probe in {setup_py}")
+
+'''
+    if "def patch_arm64_dependency_sources(" not in text and marker in text:
+        text = text.replace(marker, helper + marker)
+    call = '    patch_arm64_dependency_sources(dependency_dir)\n'
+    if call not in text:
+        text = text.replace(
+            '    print(f"Checking {dependency_dir}")\n',
+            '    print(f"Checking {dependency_dir}")\n' + call,
+            1,
+        )
+    auto_build.write_text(text)
+
+install_py = root / "install.py"
+if install_py.exists():
+    text = install_py.read_text()
+    old = "    # Step 1: Try wheels first\n    wheels_success = try_wheels_first_approach()\n"
+    new = '''    # Step 1: Try wheels first, except on ARM where upstream wheels are x86_64-only.
+    if platform.machine() in ("aarch64", "arm64"):
+        cstr("ARM64 detected; skipping prebuilt Comfy3D wheels and building from source against local CUDA.").warning.print()
+        wheels_success = False
+    else:
+        wheels_success = try_wheels_first_approach()
+'''
+    if old in text and "ARM64 detected; skipping prebuilt Comfy3D wheels" not in text:
+        text = text.replace(old, new)
+    install_py.write_text(text)
+
+build_config = root / "_Pre_Builds" / "_Build_Scripts" / "build_config.yaml"
+if build_config.exists():
+    text = build_config.read_text()
+    text = text.replace('build_base_packages: ["torch", "torchvision", "torchaudio", "xformers"]', "build_base_packages: []")
+    build_config.write_text(text)
+PATCHPY
+}
+
+get_comfy3d_pack() {
+    local GIT_FOLDER="ComfyUI-3D-Pack"
+    log_comfy3d "Cloning ${GIT_FOLDER}."
+    git clone "https://github.com/MrForExample/ComfyUI-3D-Pack" "ComfyUI/custom_nodes/${GIT_FOLDER}"
+
+    prepare_gpytoolbox_arm64
+
+    local requirements="./ComfyUI/custom_nodes/${GIT_FOLDER}/requirements.txt"
+    if [ -s "${requirements}" ]; then
+        local tmp_requirements="/tmp/${GIT_FOLDER}.requirements.txt"
+        log_comfy3d "Filtering requirements to preserve the local CUDA/PyTorch stack."
+        filter_comfy3d_requirements "${requirements}" "${tmp_requirements}"
+        if [ -s "${tmp_requirements}" ]; then
+            log_comfy3d "Installing filtered Python requirements."
+            uv pip install -r "${tmp_requirements}" $UV_ARGS
+        else
+            log_comfy3d "No Python requirements remain after filtering."
+        fi
+        rm -f "${tmp_requirements}"
+    fi
+
+    local install_script="./ComfyUI/custom_nodes/${GIT_FOLDER}/install.py"
+    if [ -s "${install_script}" ]; then
+        log_comfy3d "Starting source build and wheel installation."
+        ensure_comfy3d_cuda_toolkit
+        configure_comfy3d_arm64_build_env
+        patch_comfy3d_arm64_build_scripts "./ComfyUI/custom_nodes/${GIT_FOLDER}"
+        sed -i '/Comfy3D install failed/a\    if os.environ.get("COMFY3D_INSTALL_STRICT", "1") != "0":\n        sys.exit(1)' "${install_script}"
+        sed -i '/Building wheels also failed/a\            if os.environ.get("COMFY3D_INSTALL_STRICT", "1") != "0":\n                sys.exit(1)' "${install_script}"
+        COMFY3D_INSTALL_STRICT="${COMFY3D_INSTALL_STRICT:-1}" $EMBEDDED_PYTHON "${install_script}"
+        log_comfy3d "Install completed."
+    fi
+    echo ""
+}
+
+install_addons_selects_comfy3d_pack() {
+    local selected
+    selected="$(printf '%s' "${INSTALL_ADDONS:-}" | tr -d '[:space:]')"
+    selected=",${selected},"
+    case "${selected}" in
+        *,ComfyUI-3D-Pack,*|*,3D-Pack,*|*,Comfy3D,*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+should_install_comfy3d_pack() {
+    install_addons_selects_comfy3d_pack
 }
 
 # Copy files
@@ -570,6 +798,12 @@ else
 fi
 get_node https://github.com/kijai/ComfyUI-SCAIL-Pose ComfyUI-SCAIL-Pose
 get_node https://github.com/kijai/ComfyUI-MelBandRoFormer ComfyUI-MelBandRoFormer
+
+if should_install_comfy3d_pack; then
+    get_comfy3d_pack
+else
+    echo -e "${YELLOW}Skipping ComfyUI-3D-Pack; add ComfyUI-3D-Pack to INSTALL_ADDONS to enable it.${RESET}"
+fi
 
 if [ ! -d "ComfyUI/custom_nodes/.disabled" ]; then
     mkdir -p "ComfyUI/custom_nodes/.disabled"

@@ -4,6 +4,7 @@ set -eu
 mode="${LLAMA_CPP_MODE:-auto}"
 repo="${LLAMA_CPP_REPO:-https://github.com/JamePeng/llama-cpp-python.git}"
 arch="$(uname -m)"
+numpy_version="${NUMPY_VERSION:-1.26.4}"
 
 if [ "${mode}" = "auto" ]; then
     case "${arch}" in
@@ -38,3 +39,5 @@ case "${mode}" in
         exit 1
         ;;
 esac
+
+uv pip install --force-reinstall --no-deps "numpy==${numpy_version}"
