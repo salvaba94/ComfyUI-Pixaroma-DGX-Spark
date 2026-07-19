@@ -2,7 +2,7 @@
 set -eu
 
 cd /app/ComfyUI
-mkdir -p custom_nodes custom_nodes/.disabled
+mkdir -p custom_nodes custom_nodes/.disabled models/checkpoints
 
 torch_constraints="/tmp/comfyui-docker-torch-constraints.txt"
 numpy_version="${NUMPY_VERSION:-1.26.4}"
@@ -160,6 +160,79 @@ run_node_install_script() {
     python "${target}/install.py"
     restore_numpy_abi_pin
     pin_torch_stack_if_needed
+}
+
+install_fish_audio_s2_runtime_deps() {
+    echo "[FishAudioS2] Pinning TensorBoard to match the Docker protobuf runtime."
+    uv pip install --force-reinstall --no-deps "protobuf==5.29.6" "tensorboard==2.20.0"
+    python - <<'PY'
+import audiotools
+import tensorboard.compat.proto.event_pb2
+print("FishAudioS2 TensorBoard/protobuf validation passed.")
+PY
+}
+
+install_decord_from_source_if_needed() {
+    if python - <<'PY'
+import decord
+print(f"decord validation passed: {decord.__version__}")
+PY
+    then
+        return
+    fi
+
+    echo "[RMBG] decord wheel is unavailable for this Python/ARM64 stack; compiling from source."
+    local build_root="/tmp/decord-src"
+    rm -rf "${build_root}"
+    git clone --recursive https://github.com/dmlc/decord "${build_root}"
+
+    python - "${build_root}" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+common = root / "src" / "video" / "ffmpeg" / "ffmpeg_common.h"
+text = common.read_text()
+if "#include <libavcodec/bsf.h>" not in text:
+    text = text.replace(
+        "#include <libavcodec/avcodec.h>",
+        "#include <libavcodec/avcodec.h>\n#include <libavcodec/bsf.h>",
+    )
+    common.write_text(text)
+
+reader = root / "src" / "video" / "video_reader.cc"
+text = reader.read_text()
+text = text.replace("AVCodec *dec;", "const AVCodec *dec;")
+text = text.replace("AVCodec* dec;", "const AVCodec* dec;")
+reader.write_text(text)
+PY
+
+    mkdir -p "${build_root}/build"
+    cd "${build_root}/build"
+    if cmake .. \
+        -DUSE_CUDA=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCUDA_TOOLKIT_ROOT_DIR="${CUDA_HOME:-/usr/local/cuda}" \
+        -DCMAKE_CUDA_ARCHITECTURES="${DECORD_CUDA_ARCHITECTURES:-87;90;120}" \
+        && cmake --build . --parallel "${ADDON_BUILD_JOBS:-1}"
+    then
+        echo "[RMBG] decord CUDA build completed."
+    else
+        echo "[RMBG] decord CUDA build failed, likely because libnvcuvid/NVDEC headers are not present; building CPU decoder."
+        rm -rf "${build_root}/build"
+        mkdir -p "${build_root}/build"
+        cd "${build_root}/build"
+        cmake .. -DUSE_CUDA=OFF -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --parallel "${ADDON_BUILD_JOBS:-1}"
+    fi
+
+    cd "${build_root}/python"
+    python -m pip install --no-cache-dir --no-warn-script-location .
+    cd /app/ComfyUI
+    python - <<'PY'
+import decord
+print(f"decord source build validation passed: {decord.__version__}")
+PY
 }
 
 install_requirements_preserving_torch() {
@@ -667,6 +740,9 @@ install_node https://gitlab.com/pixaroma/ComfyUI-Pixaroma.git ComfyUI-Pixaroma
 install_node https://github.com/yolain/ComfyUI-Easy-Sam3 comfyui-easy-sam3
 install_node https://github.com/kijai/ComfyUI-SCAIL-Pose ComfyUI-SCAIL-Pose
 install_node https://github.com/kijai/ComfyUI-MelBandRoFormer ComfyUI-MelBandRoFormer
+
+install_fish_audio_s2_runtime_deps
+install_decord_from_source_if_needed
 
 if should_install_comfy3d_pack; then
     log_comfy3d "Selected by INSTALL_ADDONS."

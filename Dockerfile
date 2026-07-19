@@ -47,10 +47,17 @@ RUN apt-get update \
         curl \
         ffmpeg \
         git \
+        libavcodec-dev \
+        libavdevice-dev \
+        libavfilter-dev \
+        libavformat-dev \
         libgl1 \
         libglib2.0-0 \
         libgomp1 \
+        libavutil-dev \
         libsndfile1 \
+        libswresample-dev \
+        libswscale-dev \
         libx11-dev \
         libxrandr-dev \
         libxinerama-dev \
