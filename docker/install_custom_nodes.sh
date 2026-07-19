@@ -550,12 +550,17 @@ install_comfy3d_runtime_compat_deps() {
         optimum-quanto
     env CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}" \
         CUDA_PATH="${CUDA_PATH:-${CUDA_HOME:-/usr/local/cuda}}" \
+        FORCE_CUDA=1 \
         TORCH_CUDA_ARCH_LIST="${COMFY3D_CUDA_ARCH_LIST:-${TORCH_CUDA_ARCH_LIST:-8.7;9.0;12.0}}" \
         MAX_JOBS="${MAX_JOBS:-${ADDON_BUILD_JOBS:-1}}" \
         CMAKE_BUILD_PARALLEL_LEVEL="${CMAKE_BUILD_PARALLEL_LEVEL:-${ADDON_BUILD_JOBS:-1}}" \
         python -m pip install --no-cache-dir --no-warn-script-location --timeout=1000 --retries 200 \
             --force-reinstall --no-binary diso --no-deps --no-build-isolation \
             diso==0.1.4
+    python - <<'PY'
+from diso import DiffDMC
+print(f"diso CUDA extension validation passed: {DiffDMC}")
+PY
 }
 
 install_comfy3d_pack() {
