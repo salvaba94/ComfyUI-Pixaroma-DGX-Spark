@@ -35,11 +35,12 @@ Dedicated to the **Pixaroma** team
 |---|---|---|---|---|
 | [Tiled Diffusion & VAE](https://github.com/shiimizu/ComfyUI-TiledDiffusion) | [VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) | [MelBandRoFormer](https://github.com/kijai/ComfyUI-MelBandRoFormer) | [ComfyUI Manager](https://github.com/Comfy-Org/ComfyUI-Manager) | [QwenVL](https://github.com/1038lab/ComfyUI-QwenVL) |
 | [Inpaint CropAndStitch](https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch) | [WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper) | [Qwen3-TTS](https://github.com/flybirdxx/ComfyUI-Qwen-TTS) | [Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | [GGUF](https://github.com/city96/ComfyUI-GGUF) |
-| [ControlNet Aux](https://github.com/Fannovel16/comfyui_controlnet_aux) | [WanAnimatePreprocess](https://github.com/kijai/ComfyUI-WanAnimatePreprocess) | | [KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | |
+| [ControlNet Aux](https://github.com/Fannovel16/comfyui_controlnet_aux) | [WanAnimatePreprocess](https://github.com/kijai/ComfyUI-WanAnimatePreprocess) | [FishAudioS2](https://github.com/Saganaki22/ComfyUI-FishAudioS2) | [KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | |
 | [LayerStyle](https://github.com/chflame163/ComfyUI_LayerStyle) | [SeedVR2 VideoUpscaler](https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler) | | [rgthree](https://github.com/rgthree/rgthree-comfy) | |
 | [RMBG](https://github.com/1038lab/ComfyUI-RMBG) | | | [iTools](https://github.com/MohammadAboulEla/ComfyUI-iTools) | |
 | [Easy-Sam3](https://github.com/yolain/ComfyUI-Easy-Sam3) | | | [ControlAltAI Nodes](https://github.com/gseth/ControlAltAI-Nodes) | |
-| [SCAIL-Pose](https://github.com/kijai/ComfyUI-SCAIL-Pose) | | | [TeaCache](https://github.com/welltop-cn/ComfyUI-TeaCache) | |
+| [SCAIL-Pose](https://github.com/kijai/ComfyUI-SCAIL-Pose) | | | ✨[Pixaroma](https://github.com/pixaroma/ComfyUI-Pixaroma) | |
+| | | | [Krea2T-Enhancer](https://github.com/capitan01R/ComfyUI-Krea2T-Enhancer) | |
 
 </details>
 
@@ -81,7 +82,7 @@ Dedicated to the **Pixaroma** team
     - **SageAttention** - *Installs SageAttention v2.2.0*
     - **InsightFace** - *Installs InsightFace (Pretrained models for non-commercial research only)*
     - **Trellis2** - *Installs Trellis 2.0*
-    - **Torch-Pack** - *Quick switching between: `Torch 2.7.1+cu128`, `Torch 2.8.0+cu128`, `Torch 2.9.1+cu130` and `Torch 2.10.0+cu130`*
+    - **Torch-Pack** - *Quick switching between: `Torch 2.7.1+cu128`, `Torch 2.8.0+cu128`, `Torch 2.9.1+cu130`, `Torch 2.10.0+cu130`, `Torch 2.13.0+cu130` and `Torch 2.13.0-mac`*
     - **ComfyUI-Version-Switcher** - ***Reversible** rollback to a **previous** ComfyUI version on issues*
     - **Backup ComfyUI** - *Backup, restore, and manage your ComfyUI data folders*
 
@@ -268,7 +269,7 @@ Run ComfyUI in a native desktop window instead of a browser:
 > ln -s "$SYS_GI" "$(./python_embeded/python -c "import site; print(site.getsitepackages()[0])")/gi"
 >
 > # Qt alternative (no sudo needed)
-> ./python_embeded/python -m pip install PyQt6 qtpy
+> ./python_embeded/python -m pip install PyQt6 qtpy PyQt6-WebEngine
 > ```
 
 ---
