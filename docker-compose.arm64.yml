@@ -10,7 +10,9 @@ services:
       platforms:
         - linux/arm64
       args:
-        BASE_IMAGE: nvcr.io/nvidia/pytorch:25.06-py3
+        # ARM64 equivalent of upstream's PyTorch 2.10 + CUDA 13.0 stack.
+        # NVIDIA 25.11 ships PyTorch 2.10.0a0 with CUDA 13.0.2.
+        BASE_IMAGE: nvcr.io/nvidia/pytorch:25.11-py3
         TORCH_INSTALL_MODE: preinstalled
         TORCHAUDIO_BUILD_JOBS: ${TORCHAUDIO_BUILD_JOBS:-${ADDON_BUILD_JOBS:-1}}
         ONNXRUNTIME_MODE: source

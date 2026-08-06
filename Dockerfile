@@ -111,7 +111,7 @@ RUN uv pip install scikit-build-core onnx flet chardet==5.2.0 \
         grep -Evi "^(torch|torchvision|torchaudio|torchsde|kornia|spandrel|comfy-angle)([<>=~![:space:]]|$)" requirements.txt > /tmp/comfyui-requirements.txt; \
         uv pip install -r /tmp/comfyui-requirements.txt; \
         uv pip install trampoline kornia-rs; \
-        uv pip install --no-deps torchsde kornia spandrel comfy-angle; \
+        uv pip install --no-deps torchsde "kornia==0.7.4" spandrel comfy-angle; \
         rm -f /tmp/comfyui-requirements.txt; \
     else \
         uv pip install -r requirements.txt; \

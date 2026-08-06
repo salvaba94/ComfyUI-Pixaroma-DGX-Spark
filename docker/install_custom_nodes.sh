@@ -740,6 +740,8 @@ install_node https://gitlab.com/pixaroma/ComfyUI-Pixaroma.git ComfyUI-Pixaroma
 install_node https://github.com/yolain/ComfyUI-Easy-Sam3 comfyui-easy-sam3
 install_node https://github.com/kijai/ComfyUI-SCAIL-Pose ComfyUI-SCAIL-Pose
 install_node https://github.com/kijai/ComfyUI-MelBandRoFormer ComfyUI-MelBandRoFormer
+install_node https://github.com/capitan01R/ComfyUI-Krea2T-Enhancer ComfyUI-Krea2T-Enhancer
+install_node https://github.com/lbouaraba/comfyui-krea2edit ComfyUI-Krea2Edit
 
 install_fish_audio_s2_runtime_deps
 install_decord_from_source_if_needed
